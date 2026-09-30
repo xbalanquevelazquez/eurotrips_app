@@ -1,0 +1,128 @@
+body {
+     background: #fff;
+     color: #444;
+}
+
+a {
+     color: #1bb1dc;
+     transition: 0.5s;
+}
+
+a:hover,
+a:active,
+a:focus {
+     color: #0a98c0;
+     outline: none;
+     text-decoration: none;
+}
+
+h1,h2,h3,h4,h5,h6 {
+     font-weight: 400;
+     font-family:'ExoDos', Helvetica, Arial;
+}
+.form-control::placeholder {
+     color: #7c7c7c!important;
+ }
+.btn-rounded{
+     border-radius: 25px;
+}
+
+
+
+.logo-image-white{
+     max-width: 270px;
+}
+
+.img-sector{
+     max-width: 220px;
+}
+small.terms{
+     font-size: 80%;
+     color: rgb(114, 114, 114);
+}
+.hidden{
+     display: none!important;
+}
+
+.h2-form{
+     font-size: 170%;
+     font-weight: 700;
+     color: #007BFF
+}
+
+.login-form .form-control::placeholder {
+     color: #ffffff6e!important;
+ }
+
+.login-form .form-group{
+	margin-bottom:20px;
+}
+
+.login-form .form-group label{
+     font-weight: 600;
+     font-size: 100%;
+     margin-left: 15px;
+     margin-bottom: 2px;
+}
+
+.login-form .form-group label,
+.login-form .form-group input,
+.login-form .form-group button{
+	width:100%;
+	color:#fff;
+     display:block;
+}
+.login-form .form-group label{color:#20b3af}
+
+.login-form .form-group input,
+.login-form .form-group button{
+	border:none;
+	padding:15px 20px;
+	border-radius:8px;
+	background:rgba(255,255,255,.2);
+}
+
+.login-form p a{
+     color:#20b3af; 
+}
+.btn-login{
+     border-radius: 8px;
+     color: rgb(0, 71, 148);
+     font-weight: 600;
+     
+}
+.btn-login:hover{
+     color: #007BFF;
+     background-color: rgb(199, 199, 199);
+     -webkit-transition: 1s; /* Safari */
+     transition: 1s;
+}
+
+.btn-bioss{background-color:#20b3af;color:#FFF;}
+/* On screens that are 600px or less*/
+@media screen and (max-width: 600px) {
+     .py-5{
+          padding: 10px 0!important;
+     }
+     .my-5{
+          margin: 20px 0!important;
+     }
+     .col-sector{
+          margin: 20px 0;
+     }
+     .p-5{
+          padding: 5px!important;
+     }
+     .m-5{
+          margin: 5px!important;
+     }
+     .logo-image-white{
+          max-width: 100px;
+     }
+     .mx-5 {
+          margin: 0 10px!important;
+      }
+      .p-4{
+          padding: 4px!important;
+     }
+}

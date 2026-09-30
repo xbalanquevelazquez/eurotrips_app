@@ -1,0 +1,202 @@
+{$mensaje}
+<div class="col innerContent">
+	<div class="row">
+		<div class="col col-12 col-md-7 mr2">
+			<div class="cardContainer fullWidth mb2">
+				<div class="row">
+					<div class="col col-md-11">
+						<div>
+							<span class="strong">{$NOMBRE}</span>
+						</div>
+						<div class="anotacion">{$EMAIL}</div>
+					</div>
+					<div class="col col-md-1 aright">
+						<a href="{$siteURL}PERFIL" class="btn navDetalles"><i class="fa-solid fa-chevron-right"></i></a>
+					</div>
+				</div>
+			</div>
+			<div class="cardContainer fullWidth mb2">
+				<div class="row">
+					<div class="col col-md-11">
+						<div class="titulo">Mi viaje</div>
+					</div>
+					
+				</div>
+				<div class="row">
+					<div class="col">
+						<div class="contornear fullWidth viajeDetalles mb1">
+							<div class="imagen"></div>
+							<div class="row bg-gris-mas-claro">
+								<div class="col col-12 col-md-9 p1">
+									<div class="texto strong texto-color">{$trip_name}</div>
+								</div>
+								<div class="col col-12 col-md-3 p1 acenter">
+									<span class="small">Estatus: </span><span class="capsula hueca {$colorTripStatus} acenter">{$trip_status}</span>
+								</div>
+							</div>
+						</div>
+						<div class="contornear fullWidth aright p1">
+							<!--a href="" class="btn navegacion">Instrucciones para consulta de itinerario</a--> {$btn_itinerario}
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="cardContainer fullWidth mb2">
+				<div class="row">
+					<div class="col col-md-11">
+						<div class="titulo texto-aqua"><i class="fa-solid fa-triangle-exclamation texto-amarillo"></i> Asistencia de viaje</div>
+					</div>
+					
+				</div>
+				<div class="row">
+					<div class="col">
+						<div class="contornear fullWidth viajeDetalles mb1">
+							<div class="row bg-gris-mas-claro">
+								<div class="col col-12 col-md-6 p1 acenter">
+									<span class="small">Número de asistencia de viaje: </span><span class="capsula hueca acenter">{$support_number}</span>
+								</div>
+								<div class="col col-12 col-md-6 p1 aright">
+									<a href="{$assistance_file}" class="btn primario {$CSSbtnAssistance}" target="_blank">Documento de asistencia de viaje</a>
+								</div>
+							</div>
+						</div>
+						{$assistance_documents}
+					</div>
+				</div>
+			</div>
+			<div class="cardContainer fullWidth mb2">
+				<div class="row">
+					<div class="col col-md-11">
+						<div class="titulo">Avisos <span class="small">(<span class="totalRecordsAvisos">{$totalRecords}</span>)</span></div>
+					</div>
+				</div>
+				<div id="panelAlertas" class="row">
+					<div class="col">
+						<div class="alertas resultBoxRegistros">
+							{$alertas}
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+		</div>
+		<div class="col">
+			<div class="cardContainer fullWidth mb2">
+				<div class="row">
+					<div class="col col-md-11">
+						<div class="titulo">Documentos</div>
+						<div class="anotacion">Revisa los documentos necesarios para tu viaje</div>
+					</div>
+					<div class="col col-md-1 aright">
+						<a href="{$siteURL}DOCS" class="btn navDetalles"><i class="fa-solid fa-chevron-right"></i></a>
+					</div>
+				</div>
+				<div class="row contenedorDocumentos">
+					<div class="col">
+						<a href="{$siteURL}DOCS/detalles/" class="btn item">
+							<div class="row">
+							 	<div class="col col-6"><i class="{$passportCSS}"></i> Pasaporte</div>
+							 	<div class="col col-6 aright"><span class="capsula hueca {$btnPassportColor}">{$passportStatus}</span></div>
+							 </div>
+						</a>
+						<a href="{$siteURL}DOCS/detalles/" class="btn item">
+							<div class="row">
+							 	<div class="col col-6"><i class="{$passport2CSS}"></i> Pasaporte 2</div>
+							 	<div class="col col-6 aright"><span class="capsula hueca {$btnPassport2Color}">{$passport2Status}</span></div>
+							 </div>
+						 </a>
+					</div>
+				</div>
+			</div>
+			<div class="cardContainer fullWidth mb2">
+				<div class="row">
+					<div class="col col-md-11">
+						<div class="titulo">Pagos</div>
+					</div>
+					<div class="col col-md-1 aright">
+						<a href="{$siteURL}PAGOS" class="btn navDetalles"><i class="fa-solid fa-chevron-right"></i></a>
+					</div>
+				</div>
+				<div class="row contenedorPagos">
+					{$panelPagos}
+					<div class="row mt1">
+						<a href="{$siteURL}PAGOS" class="btn primario fullWidth">Módulo de pagos</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+const traveler_id = '{$traveler_id}';
+getAlertas();
+function getAlertas(){
+	$(".resultBoxRegistros").html("<div class=' redondear setpadding5'><img src='{$siteURL}img/loader_world_1.gif' width='45' /></div>");
+	var envioData = new FormData();
+	envioData.append("action",'getAlertasUser');													
+	envioData.append("traveler_id",traveler_id);
+	console.log('getAlertas()');
+	$.ajax({
+		url: "{$siteURL}webservice/acciones.php",
+		type:"POST",
+		processData: false,//tanto processData como contentType deben estar en false para que funcione FormData
+		contentType: false,
+		data:envioData,
+		cache:false,
+		dataType:"json",
+		success: function(respuesta){
+			var texto = '';
+			if(respuesta.success){
+				$(".resultBoxRegistros").html('');
+				texto = respuesta.data.codigo;
+				$('.totalRecordsAvisos').text(respuesta.data.totalRecords);
+			}else{
+				texto = "<div class='bg-warning'>"+respuesta.error+"</div>";
+				if(respuesta.data.httpCode == 401 || respuesta.data.httpCode == 403){
+					document.location.href='{$siteURL}SALIR';
+				}
+			}
+			$(".resultBoxRegistros").html(texto);
+			activarFuncionalidades();
+		}
+	});
+}
+function activarFuncionalidades(){
+	$('.btnMarkRead').click(function(){
+		var id = $(this).attr('notif-ref');
+		markAsRead(id);
+	});		
+}
+function markAsRead(id){
+	var envioData = new FormData();
+	envioData.append("action",'markAlertAsRead');													
+	envioData.append("notification_id",id);
+	$.ajax({
+		url: "{$siteURL}webservice/acciones.php",
+		type:"POST",
+		processData: false,//tanto processData como contentType deben estar en false para que funcione FormData
+		contentType: false,
+		data:envioData,
+		cache:false,
+		dataType:"json",
+		success: function(respuesta){
+			var texto = '';
+			if(respuesta.success){
+				//texto = '<span class="alerta verde">Se guardó el dato</span>';
+				var currentTotal = $('.totalRecordsAvisos').text();
+				$('.totalRecordsAvisos').text(currentTotal--);
+				$('[notif-container="'+id+'"]').fadeOut();
+				getAlertas();
+
+			}else{
+				console.log(respuesta.error);
+				if(respuesta.data.httpCode == 401 || respuesta.data.httpCode == 403){
+					document.location.href='{$siteURL}SALIR';
+				}
+			}
+
+		}
+	});
+}
+</script>

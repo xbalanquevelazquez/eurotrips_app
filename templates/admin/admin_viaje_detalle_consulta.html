@@ -1,0 +1,123 @@
+{$alerta_envio}
+<div class="mensaje">{$mensaje}</div>
+<div class="col">
+	<div class="innerContent">
+		<div class="cardContainer fullWidth mb1">
+			<div class="row">
+				<div class="col">
+					<a href="{$returnLink}" class="btn navegacion"><i class="fa-solid fa-chevron-left"></i> Regresar</a>
+				</div>
+			</div>
+		</div>
+		<div class="cardContainer fullWidth mb1 formDesign">
+			<fieldset><legend>Viaje</legend>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Nombre del grupo:</label></div>
+					<div class="col">
+						{$trip_name}
+					</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Estatus:</label></div>
+					<div class="col">
+						{$label_status}
+					</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Enlace de itinerario:</label></div>
+					<div class="col">
+						<a href="{$itinerary_url}">{$itinerary_url}</a>
+					</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Moneda:</label></div>
+					<div class="col">
+						{$monedaYSimbolo}
+					</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Costo total:</label></div>
+					<div class="col">
+						{$cost}
+					</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Fecha límite para liquidar <span class="obligatorio">*</span>:</label></div>
+					<div class="col">
+						{$limit_date}
+					</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Año de viaje:</label></div>
+					<div class="col">
+						{$year}
+					</div>
+				</div>
+				
+			</fieldset>
+		</div><!--//.cardContainer-->
+		<div class="cardContainer fullWidth mb2">
+			<div class="row">
+				<div class="col"><h3>Calendario de pagos</h3></div>
+			</div>
+			<div class="responseCalendarioPagos"></div>
+			
+			
+			<div class="row">
+				<div class="col dataTableContainer resultBoxRegistros">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	const costoTotal = {$costoTotal};
+	var subtotalParcialidades = {$subtotalParcialidades};
+$(document).ready(function(){
+	console.log('Init...');
+	getParcialidades('{$trip_id}');
+});
+function getParcialidades(trip_id,type='{$tipoRegistro}'){
+	$(".resultBoxRegistros").html("<div class=' redondear setpadding5'><img src='{$siteURL}img/loader_world_1.gif' width='45' /></div>");
+	var envioData = new FormData();
+	envioData.append("action",'getParcialidades');													
+	envioData.append("trip_id",trip_id);
+	envioData.append("type",type);
+	console.log('getParcialidades()');
+	$.ajax({
+		url: "{$siteURL}webservice/acciones.php",
+		type:"POST",
+		processData: false,//tanto processData como contentType deben estar en false para que funcione FormData
+		contentType: false,
+		data:envioData,
+		cache:false,
+		dataType:"json",
+		success: function(respuesta){
+			var texto = '';
+			if(respuesta.success){
+				$(".resultBoxRegistros").html('');
+				texto = respuesta.data.codigo;
+				subtotalParcialidades = respuesta.data.subtotalParcialidades;
+			}else{
+				texto = "<div class='bg-warning'>"+respuesta.error+"</div>";
+				if(respuesta.data.httpCode == 401 || respuesta.data.httpCode == 403){
+					document.location.href='{$siteURL}SALIR';
+				}
+			}
+			$(".resultBoxRegistros").html(texto);
+			//activarFuncionalidades();
+		},
+		error: function(){
+			$(".resultBoxRegistros").html('');
+			if (typeof respuesta !== 'undefined') {
+				$(".resultBoxRegistros").html(respuesta.data.error);
+				console.log(respuesta.data.error);
+			} else {
+			    //document.location.href="{$siteURL}SALIR";
+			}
+		}
+	});
+}
+
+</script>

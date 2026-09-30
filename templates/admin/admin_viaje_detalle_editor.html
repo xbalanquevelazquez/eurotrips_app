@@ -1,0 +1,337 @@
+{$alerta_envio}
+<div class="mensaje">{$mensaje}</div>
+<div class="col">
+	<div class="innerContent">
+		<div class="cardContainer fullWidth mb1">
+			<div class="row">
+				<div class="col">
+					<a href="{$returnLink}" class="btn navegacion"><i class="fa-solid fa-chevron-left"></i> Regresar</a>
+				</div>
+			</div>
+		</div>
+		<div class="cardContainer fullWidth mb1 formDesign">
+			<form method="POST">
+			<fieldset><legend>Viaje</legend>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Nombre del grupo:</label></div>
+					<div class="col">
+						<input type="text" id="sendArr[trip_name]" name="sendArr[trip_name]" value="{$trip_name}" />
+						{$alerta_trip_name}
+					</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Estatus:</label></div>
+					<div class="col">
+						<select name="sendArr[status]" id="sendArr[status]">
+							<option value="preparing" class="texto-naranja"{$status_selected_1}>Pendiente</option>
+							<option value="confirmed" class="texto-verde"{$status_selected_2}>Confirmado</option>
+						</select>
+					</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Enlace de itinerario:</label></div>
+					<div class="col">
+						<input type="text" id="sendArr[itinerary_url]" name="sendArr[itinerary_url]" value="{$itinerary_url}" />
+						{$alerta_itinerary_url}
+					</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Moneda:</label></div>
+					<div class="col">
+						<input type="hidden" id="sendArr[currency]" name="sendArr[currency]" value="{$currency}" />
+						{$monedaYSimbolo}
+					</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Costo total:</label></div>
+					<div class="col">
+						<input type="hidden" id="sendArr[cost]" name="sendArr[cost]" value="{$cost}">
+						{$cost}
+					</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Fecha límite para liquidar <span class="obligatorio">*</span>:</label></div>
+					<div class="col">
+						<input id="sendArr[limit_date]" name="sendArr[limit_date]" type="date" value="{$limit_date}" />
+					</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Año de viaje:</label></div>
+					<div class="col">
+						<select name="sendArr[year]" id="sendArr[year]">
+							{$yearOptions}
+						</select>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col"><button type="submit" class="btn primario"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+				</div>
+			</fieldset>
+			</form>
+		</div><!--//.cardContainer-->
+		<div class="cardContainer fullWidth mb2">
+			<div class="row">
+				<div class="col"><h3>Calendario de pagos</h3></div>
+			</div>
+			
+			<div class="responseCalendarioPagos"></div>
+			
+			
+			<div class="row">
+				<div class="col dataTableContainer resultBoxRegistros">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	const costoTotal = {$costoTotal};
+	var subtotalParcialidades = {$subtotalParcialidades};
+$(document).ready(function(){
+	console.log('Init...');
+	$('#monto,[name="sendArr[cost]"]').on('input', function () {
+	    // Permitir sólo dígitos y un punto
+	    this.value = this.value
+	        .replace(/[^0-9.]/g, '')
+	        .replace(/(\..*)\./g, '$1');
+
+	        var resto = calcularResto(costoTotal,subtotalParcialidades,$('#monto').val());
+	        $('#subtotal').parent().removeClass('hidden');
+	       	$('#subtotal .alerta').removeClass('hidden').html( resto );
+	       	if(resto < 0){
+	       		$('#subtotal .alerta').removeClass('aqua').addClass('roja');
+	       	}else{
+	       		$('#subtotal .alerta').removeClass('roja').addClass('aqua');
+	       	}
+	});
+	$('#monto,[name="sendArr[cost]"]').on('blur', function () {
+	    let valor = parseFloat(this.value.replace(',', '.'));
+		if (isNaN(valor)) {
+		    valor = 0;
+		}
+		this.value = valor.toFixed(2);
+	});
+	//****************************
+	$('.requerido').on('input change', function(e){
+		let $campo = $(this);
+	    if($campo.is(':checkbox')){
+	        if($campo.is(':checked')){
+	            $campo.parent().removeClass('input-error');
+	        }
+	    }else{
+	        if(($campo.val() ?? '').trim() !== ''){
+	            $campo.removeClass('input-error');
+	            if($campo.attr('id') == 'monto'){
+	            	$('.mensajeMontoSugerido').html('');
+	            }
+	        }
+
+	    }
+	});
+
+	$('#btnAddFechaPago').click(function(e){
+		if(!validarFormulario()){
+	    	e.preventDefault();
+	        alert('Hay campos obligatorios sin completar.');
+	        return;
+	    }else{
+	    	$('.responseCalendarioPagos').html('');
+			var envioData = new FormData();
+			envioData.append("action",'setFechaPago');													
+			envioData.append("trip_id",'{$trip_id}');
+			envioData.append("payment_date",$('#fecha').val());
+			envioData.append("amount",$('#monto').val());
+
+			$.ajax({
+				url: "{$siteURL}webservice/acciones.php",
+				type:"POST",
+				processData: false,//tanto processData como contentType deben estar en false para que funcione FormData
+				contentType: false,
+				data:envioData,
+				cache:false,
+				dataType:"json",
+				success: function(respuesta){
+					var texto = '';
+					if(respuesta.success){
+						$(".responseCalendarioPagos").html('');
+						texto = respuesta.data.codigo;
+						$('#fecha,#monto').val('');
+						getParcialidades('{$trip_id}');
+						$(".responseCalendarioPagos").html('<div class="alerta verde">Se agrego correctamente la fecha de pago.</div>');
+						activarFuncionalidades();
+
+						$('#subtotal').parent().addClass('hidden');
+	       				$('#subtotal .alerta').addClass('hidden').html('');
+						
+					}else{
+						texto = respuesta.error;
+						$(".responseCalendarioPagos").html(texto);
+						if(respuesta.data.httpCode == 401 || respuesta.data.httpCode == 403){
+							document.location.href='{$siteURL}SALIR';
+						}
+					}
+				},
+				error: function(){
+					$(".responseCalendarioPagos").html('');
+					if (typeof respuesta !== 'undefined') {
+						$(".responseCalendarioPagos").html(respuesta.data.error);
+						console.log(respuesta.data.error);
+					} else {
+					    //document.location.href="{$siteURL}SALIR";
+					}
+				}
+			});
+
+	    }
+	});
+	getParcialidades('{$trip_id}');
+});
+function getParcialidades(trip_id,type='{$tipoRegistro}'){
+	$(".resultBoxRegistros").html("<div class=' redondear setpadding5'><img src='{$siteURL}img/loader_world_1.gif' width='45' /></div>");
+	var envioData = new FormData();
+	envioData.append("action",'getParcialidades');													
+	envioData.append("trip_id",trip_id);
+	envioData.append("type",type);
+	console.log('getParcialidades()');
+	$.ajax({
+		url: "{$siteURL}webservice/acciones.php",
+		type:"POST",
+		processData: false,//tanto processData como contentType deben estar en false para que funcione FormData
+		contentType: false,
+		data:envioData,
+		cache:false,
+		dataType:"json",
+		success: function(respuesta){
+			var texto = '';
+			if(respuesta.success){
+				$(".resultBoxRegistros").html('');
+				texto = respuesta.data.codigo;
+				subtotalParcialidades = respuesta.data.subtotalParcialidades;
+			}else{
+				texto = "<div class='bg-warning'>"+respuesta.error+"</div>";
+				if(respuesta.data.httpCode == 401 || respuesta.data.httpCode == 403){
+					document.location.href='{$siteURL}SALIR';
+				}
+			}
+			$(".resultBoxRegistros").html(texto);
+			activarFuncionalidades();
+		},
+		error: function(){
+			$(".resultBoxRegistros").html('');
+			if (typeof respuesta !== 'undefined') {
+				$(".resultBoxRegistros").html(respuesta.data.error);
+				console.log(respuesta.data.error);
+			} else {
+			    //document.location.href="{$siteURL}SALIR";
+			}
+		}
+	});
+}
+function activarFuncionalidades(){
+
+	$(".btnDelete").click(function(){
+		let resultado = confirm("¿Está seguro de que deseas eliminar este elemento?");
+		//console.log($(this));
+		var installment_id =$(this).attr('data-id');
+		if (resultado) {
+	    	console.log("Ejecutando acción...");
+			var envioData = new FormData();
+			envioData.append("action",'deleteParcialidad');													
+			envioData.append("trip_id",'{$trip_id}');
+			envioData.append("installement_id",installment_id);
+			//envioData.append("type",type);
+			console.log('deleteParcialidad()');
+			$.ajax({
+				url: "{$siteURL}webservice/acciones.php",
+				type:"POST",
+				processData: false,//tanto processData como contentType deben estar en false para que funcione FormData
+				contentType: false,
+				data:envioData,
+				cache:false,
+				dataType:"json",
+				success: function(respuesta){
+					var texto = '';
+					if(respuesta.success){
+						$(".responseCalendarioPagos").html('');
+						texto = respuesta.data.codigo;
+						$('#fecha,#monto').val('');
+						getParcialidades('{$trip_id}');
+						$(".responseCalendarioPagos").html('<div class="alerta verde">Se eliminó la fecha de pago.</div>');
+						activarFuncionalidades();
+
+						$('#subtotal').parent().addClass('hidden');
+	       				$('#subtotal .alerta').addClass('hidden').html('');
+
+					}else{
+						texto = "<div class='bg-warning'>"+respuesta.error+"</div>";
+						if(respuesta.data.httpCode == 401 || respuesta.data.httpCode == 403){
+							document.location.href='{$siteURL}SALIR';
+						}
+					}					
+				},
+				error: function(){
+					$(".responseCalendarioPagos").html('');
+					if (typeof respuesta !== 'undefined') {
+						$(".responseCalendarioPagos").html(respuesta.data.error);
+						console.log(respuesta.data.error);
+					} else {
+					    //document.location.href="{$siteURL}SALIR";
+					}
+				}
+			});
+		    
+		} else {
+		    console.log("Acción cancelada.");
+		}
+	});
+
+}
+function validarFormulario(){
+	$('.mensajeMontoSugerido').html('');
+    let valido = true;
+
+    $('.requerido').each(function(){
+
+        let $campo = $(this);
+        let valor = ($campo.val() ?? '').trim();
+
+        if($campo.is(':checkbox')){
+
+            if(!$campo.is(':checked')){
+                $campo.parent().addClass('input-error');
+                valido = false;
+            }else{
+                $campo.parent().removeClass('input-error');
+            }
+
+        }else{
+
+            if(valor === ''){
+                $campo.addClass('input-error');
+                valido = false;
+            }else{
+                $campo.removeClass('input-error');
+            }
+
+            if($campo.attr('id') == 'monto'){
+            	if($campo.val() == '' || Math.ceil($campo.val()) == 0){
+            		$campo.addClass('input-error');
+            		$('.mensajeMontoSugerido').html('<div class="alerta roja">El monto no puede ser 0.</div>');
+            	}
+            }
+        }
+    });
+
+    return valido;
+}
+
+function calcularResto(total,totalParcialidades,monto){
+	console.log('total:'+total);
+	console.log('totalParcialidades:'+totalParcialidades);
+	console.log('monto:'+monto);
+	console.log('monto:'+((total - totalParcialidades) - monto));
+
+	return restante = ((total - totalParcialidades) - monto).toFixed(2);
+}
+</script>

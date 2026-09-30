@@ -1,0 +1,142 @@
+{$alerta_envio}
+<div class="col">
+	<div class="innerContent">
+		<div class="cardContainer fullWidth mb1">
+			<div class="row">
+				<div class="col">
+					<a href="{$returnLink}" class="btn navegacion"><i class="fa-solid fa-chevron-left"></i> Regresar</a>
+				</div>
+			</div>
+		</div>
+		<div class="cardContainer fullWidth mb1 formDesign">
+			<form method="POST">
+			<fieldset><legend>Viaje</legend>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Nombre del grupo <span class="obligatorio">*</span>:</label></div>
+					<div class="col">
+						<input type="text" id="sendArr[trip_name]" name="sendArr[trip_name]" value="{$trip_name}" class="requerido" />
+						{$alerta_trip_name}
+					</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Estatus <span class="obligatorio">*</span>:</label></div>
+					<div class="col">
+						<select name="sendArr[status]" id="sendArr[status]">
+							<option value="preparing" class="texto-naranja"{$status_selected_1}>Pendiente</option>
+							<option value="confirmed" class="texto-verde"{$status_selected_2}>Confirmado</option>
+						</select>
+					</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Enlace de itinerario:</label></div>
+					<div class="col">
+						<input type="text" id="sendArr[itinerary_url]" name="sendArr[itinerary_url]" value="{$itinerary_url}" />
+						{$alerta_itinerary_url}
+					</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Moneda <span class="obligatorio">*</span>:</label></div>
+					<div class="col">
+						<select name="sendArr[currency]" id="sendArr[currency]">
+							<option value="1"{$currency_selected_1}>Euros (€)</option>
+							<option value="2"{$currency_selected_2}>Dólares ($)</option>
+						</select>
+					</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Costo total:</label></div>
+					<div class="col">
+						<input type="text" id="sendArr[cost]" name="sendArr[cost]" value="{$cost}" class="requerido">
+						{$alerta_cost}
+					</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Fecha límite para liquidar <span class="obligatorio">*</span>:</label></div>
+					<div class="col">
+						<input id="sendArr[limit_date]" name="sendArr[limit_date]" type="date" class="requerido" />
+						{$alerta_fecha}
+					</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Año de viaje <span class="obligatorio">*</span>:</label></div>
+					<div class="col">
+						<select name="sendArr[year]" id="sendArr[year]">
+							{$yearOptions}
+						</select>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col"><button type="submit" class="btn primario" id="sendForm"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+				</div>
+			</fieldset>
+			</form>
+		</div><!--//.cardContainer-->
+	</div>
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+	console.log('Init...');
+	$('#monto,[name="sendArr[cost]"]').on('input', function () {
+	    // Permitir sólo dígitos y un punto
+	    this.value = this.value
+	        .replace(/[^0-9.]/g, '')
+	        .replace(/(\..*)\./g, '$1');
+	});
+	$('#monto,[name="sendArr[cost]"]').on('blur', function () {
+	    let valor = parseFloat(this.value.replace(',', '.'));
+		if (isNaN(valor)) {
+		    valor = 0;
+		}
+		this.value = valor.toFixed(2);
+	});
+	//****************************
+	$('#sendForm').on('click', function(e){
+	    if(!validarFormulario()){
+	    	e.preventDefault();
+	        alert('Hay campos obligatorios sin completar.');
+	        return;
+	    }
+	    // Enviar formulario
+	});
+	//****************************
+	$('.requerido').on('input change', function(e){
+		let $campo = $(this);
+	    if($campo.is(':checkbox')){
+	        if($campo.is(':checked')){
+	            $campo.parent().removeClass('input-error');
+	        }
+	    }else{
+	        if(($campo.val() ?? '').trim() !== ''){
+	            $campo.removeClass('input-error');
+	        }
+	    }
+	});
+});
+function validarFormulario(){
+
+    let valido = true;
+    $('.requerido').each(function(){
+
+        let $campo = $(this);
+        let valor = ($campo.val() ?? '').trim();
+
+        if($campo.is(':checkbox')){
+            if(!$campo.is(':checked')){
+                $campo.parent().addClass('input-error');
+                valido = false;
+            }else{
+                $campo.parent().removeClass('input-error');
+            }
+        }else{
+            if(valor === ''){
+                $campo.addClass('input-error');
+                valido = false;
+            }else{
+                $campo.removeClass('input-error');
+            }
+        }
+    });
+
+    return valido;
+}
+</script>

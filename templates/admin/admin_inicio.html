@@ -1,0 +1,53 @@
+<div class="col">
+	<div id="menuPrincipal" class="row">
+		<div class="col col-3 card viajeros">
+			<a href="{$siteURL}VIAJEROS">
+				<div class="encabezado">
+					<i class="icon fa-solid fa-users"></i> 
+					<div class="label">Viajeros</div> 
+					<div class="moreArrow">
+						<div class="iconNormal"><i class="fa-solid fa-chevron-right"></i></div>
+						<div class="iconHover"><i class="fa-solid fa-chevron-right"></i></div>
+					</div>
+				</div>
+				<div class="imagen"></div>
+			</a>
+		</div>
+		<div class="col col-3 card viajes">
+			<a href="{$siteURL}VIAJES">
+				<div class="encabezado">
+					<i class="icon fa-solid fa-suitcase-rolling"></i> 
+					<span class="label">Viajes</span> 
+					<div class="moreArrow">
+						<div class="iconNormal"><i class="fa-solid fa-chevron-right"></i></div>
+						<div class="iconHover"><i class="fa-solid fa-chevron-right"></i></div>
+					</div>
+				</div>
+				<div class="imagen"></div>
+			</a>
+		</div>
+		<div class="col col-3 card configuracion">
+			<a href="{$siteURL}CONFIG">
+				<div class="encabezado">
+					<i class="icon fa-solid fa-cog"></i> 
+					<span class="label">Configuracion</span> 
+					<div class="moreArrow">
+						<div class="iconNormal"><i class="fa-solid fa-chevron-right"></i></div>
+						<div class="iconHover"><i class="fa-solid fa-chevron-right"></i></div>
+					</div>
+				</div>
+				<div class="imagen"></div>
+			</a>
+		</div>
+	</div>
+	<div id="adminAlertas" class="row">
+		<div class="col">
+			<div class="card">
+				<div class="encabezado primario"><i class="icono fa-solid fa-bell"></i> Alertas <strong>({$count_alertas})</strong></div>
+				<div class="alertas">
+					{$alertas}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

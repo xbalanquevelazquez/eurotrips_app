@@ -1,0 +1,113 @@
+{$mensaje}
+<div class="col">
+	<div class="innerContent">
+		<div class="cardContainer fullWidth mb1">
+			<div class="row">
+				<div class="col">
+					<a href="{$returnLink}" class="btn navegacion"><i class="fa-solid fa-chevron-left"></i> Regresar</a>
+				</div>
+			</div>
+		</div>
+		<div class="row dobleContainer">
+			<div class="col col-5 mr1">
+				<form id="dataForm" method="post" enctype="multipart/form-data" action="">
+					<input type="hidden" id="document_type" name="document_type" value="{$document_type}">
+					<div class="cardContainer fullWidth mb1 formDesign">
+						<div class="row gap mt2">
+							<div class="col col-12 col-md-3 aright"><label>Documento: </label></div>
+							<div class="col ">{$tipo_documento}</div>
+							<div class="col col-12 col-md-4"><span class="capsula hueca {$btnDocumentColor}"><i class="{$documentCSS}"></i> {$documentStatus}</span></div>
+						</div>
+
+						<div class="row gap mt2">
+							<div class="col col-3 aright"><label>Observaciones: </label></div>
+							<div class="col">
+								<input type="text" class="hidden" id="notes" name="notes" value="{$notes}" />
+								{$notes}
+							</div>
+						</div>
+
+						<div class="mensajeDocument">{$mensajeDocument}</div>
+						<div class="row gap mt2">
+							<div class="col col-3 aright"><label>{$labelSubir}</label></div>
+							<div class="col">
+								{$input}
+								{$subirDoc}
+
+								<br />
+								<span id="documento_name" class="fileName"></span>	
+							</div>
+						</div>
+
+						<div class="row gap">
+							<div class="col col-3 aright"></div>
+							<div class="col">{$btnEnviar}</div>
+						</div>
+					</div><!--//.cardContainer-->
+				</form>
+			</div>
+			<div class="col">
+				<div class="cardContainer fullWidth mb2">
+					<div class="row">
+						<div class="col"><h3>Documento: <span class="strong">{$tipo_documento}</span></h3></div>
+					</div>
+					<div class="row">
+						<div class="col acenter p1">
+							{$visorDocumento}			
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">	
+$('.btnUpload').on('click', function(){
+    let input = $(this).data('input');
+    $('#' + input).click();
+});
+$('#sendForm').on('click', function(e){
+	e.preventDefault();
+	console.log('click Send');
+	console.log($('.document-upload')[0].files.length);
+    if($('.document-upload')[0].files.length < 1){ 
+    	alert('{$alertFaltaArchivo}'); 
+    	return; 
+    }else{
+    	$('#dataForm').submit();
+    }
+});
+$('.document-upload').on('change', function(){
+    if(this.files.length == 0) return;
+    let archivo = this.files[0];
+    let id = this.id;
+	let permitidos = ['pdf','jpg','jpeg','png'];
+	let extension = archivo.name.split('.').pop().toLowerCase();
+
+
+    if(!permitidos.includes(extension)){
+	    alert('{$alertFormatoNoPermitido}');
+	    $(this).val('');
+	    return;
+	}
+
+	if(archivo.size > 2 * 1024 * 1024){
+	    alert('{$alertExcedeTamanio}');
+	    $(this).val('');
+	    return;
+	}
+	console.log(id);
+    $('#' + id + '_name').html(
+    	'<span class="chip mt1">'+
+        archivo.name +
+        ' <a href="#" class="removeFile" data-input="' + id + '">✕</a>'+
+        '</span>'
+    );
+});
+$(document).on('click','.removeFile',function(e){
+    e.preventDefault();
+    let input = $(this).data('input');
+    $('#' + input).val('');
+    $('#' + input + '_name').empty();
+});
+</script>

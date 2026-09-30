@@ -1,0 +1,33 @@
+<div class="container my-5 py-1">
+     <div class="row justify-content-md-center my-5">
+          <div class="col-3 text-center logo-column">
+               <img src="{$siteURL}img/logo-biossmann-blanco-r.png" alt="Biossmann" class="img-fluid logo-image">
+          </div>
+     </div>
+     <div class="row justify-content-md-center my-5 pt-5">
+          <div class="col-12 col-md-4 text-center">
+               {$appName}
+          </div>
+     </div>
+     <div class="row justify-content-md-center my-5">
+          <div class="col-12 col-md-4 col-sector">
+               <form class="login-form" method="post">
+                    <div class="form-group">
+                         <label for="cmp[usrlogin]">Usuario</label>
+                         <input type="text" class="form-control" id="cmp[usrlogin]" name="cmp[usrlogin]" placeholder="Escribe tu usuario">
+                    </div>
+                    <div class="form-group mt-3">
+                         <label for="cmp[pswlogin]">Contraseña</label>
+                         <input type="password" class="form-control" id="cmp[pswlogin]" name="cmp[pswlogin]" placeholder="Escribe tu contraseña">
+                    </div>
+                    <button type="submit" class="btn btn-bioss btn-block my-5 btn-login">Iniciar Sesión</button>
+                    <div class="row">
+                         <div class="col-12 text-center">
+                              <p><a href="{$siteURL}RECUPERAR">¿Has olvidado la contraseña?</a></p>
+                              <!--p>¿No tienes cuenta? <b><a href="">Registrate</a></b></p-->
+                         </div>
+                    </div>
+               </form>
+          </div>
+     </div>
+</div>

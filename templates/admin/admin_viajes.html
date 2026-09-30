@@ -1,0 +1,119 @@
+<div class="col">
+	<div class="innerContent">
+		<div class="cardContainer fullWidth mb1 controles">
+			<div class="row">
+				<div class="col"><h3>Buscar</h3></div>
+			</div>
+			<div class="row">
+				<div class="col col-12 col-md-6">
+					<div class="row">
+						<div class="col"><input type="text" name="terminoBusqueda" id="terminoBusqueda" /> </div>
+						
+					</div>
+				</div>
+				<div class="col col-12 col-md-6 aright">
+					<a href="{$linkNuevo}" class="btn primario {$consultorHidden}"><i class="fa-solid fa-plus"></i> Nuevo</a>
+				</div>
+			</div>
+		</div><!--//.cardContainer-->
+		<div class="cardContainer fullWidth mb2">
+			<div class="row">
+				<div class="col">Registros: <span class="capsula primarioClaro" id="totalRegistros"></span></div>
+				<div class="col aright texto-grismedio small">Mostrando registros con año de viaje: <span class="strong">{$YEAR_FILTER}</span></div>
+			</div>
+			<div class="row">
+				<div class="col dataTableContainer resultBoxRegistros">
+					
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<nav id="paginacionPantalla">
+					</nav>
+				</div>
+			</div>	
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+	console.log('Init...');
+	$('#terminoBusqueda').keydown(function(e){
+	    if(e.which != 13){
+	        return;
+	    }
+	    e.preventDefault();
+	    let termino = $(this).val().trim();
+	    getRegistros(termino === '' ? '%' : termino);
+	});
+	$('#btnSearch').click(function(){
+		var currentValue = $('#terminoBusqueda').val().trim();
+		if(currentValue == ''){
+			getRegistros('%');
+		}else{
+			getRegistros(currentValue);
+		}
+	});
+	getRegistros('%');
+});
+function getRegistros(filter,page=1,type='{$data1}'){
+	$(".resultBoxRegistros").html("<div class=' redondear setpadding5'><img src='{$siteURL}img/loader_world_1.gif' width='45' /></div>");
+	var envioData = new FormData();
+	envioData.append("action",'getRegistros');													
+	envioData.append("filter",filter);
+	envioData.append("page",page);
+	envioData.append("type",type);
+	console.log('getRegistros()');
+	$.ajax({
+		url: "{$siteURL}webservice/acciones.php",
+		type:"POST",
+		processData: false,//tanto processData como contentType deben estar en false para que funcione FormData
+		contentType: false,
+		data:envioData,
+		cache:false,
+		dataType:"json",
+		success: function(respuesta){
+			var texto = '';
+			if(respuesta.success){
+				$(".resultBoxRegistros").html('');
+				texto = respuesta.data.codigo;
+			}else{
+				texto = "<div class='bg-warning'>"+respuesta.error+"</div>";
+				if(respuesta.data.httpCode == 401 || respuesta.data.httpCode == 403){
+					document.location.href='{$siteURL}SALIR';
+				}
+			}
+			$(".resultBoxRegistros").html(texto);
+			$("#paginacionPantalla").html(respuesta.data.paginacion);
+			$("#totalRegistros").html(respuesta.data.totalRegistros);
+			$('[data-toggle="tooltip"]').tooltip();
+			activarFuncionalidades();
+		},
+		error: function(){
+			$(".resultBoxRegistros").html('');
+			if (typeof respuesta !== 'undefined') {
+				$(".resultBoxRegistros").html(respuesta.data.error);
+			} else {
+			    //document.location.href="{$siteURL}SALIR";
+			}
+		}
+	});
+}
+function activarFuncionalidades(){
+	$('.page-item:not(.active)').filter(function () {
+    	return $(this).find('.page-link[disabled]').length === 0;
+    })
+    .each(function () {
+        // Aquí sólo llegan los válidos
+        $(this).click(function(){
+        	var currentValue = $('#terminoBusqueda').val().trim();
+        	var page = $(this).find('.page-link').attr('page');
+			if(currentValue == ''){
+				getRegistros('%',page);
+			}else{
+				getRegistros(currentValue,page);
+			}
+        });
+    });
+}
+</script>

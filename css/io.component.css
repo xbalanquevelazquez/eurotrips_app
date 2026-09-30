@@ -1,0 +1,47 @@
+
+.ioCheck {
+	transition: all 0.2s;
+    border: 1px solid #989898;
+    border-radius: 5px;
+    background: #FFF url('../img/elementos/io-grad.png') repeat-x center bottom;
+    width: 78px;
+    text-align: center;
+	cursor:pointer;
+	font-size:13px;
+    color: #000;
+}
+.ioCheck.ioON{
+	background-color: #49c00d;
+}
+.ioCheck.ioOFF{
+	background-color: #c4c4c4;
+}
+.ioCheck div {
+	transition: all 0.2s;
+    border: 1px solid #989898;
+    border-radius: 5px;
+    background: #e2e2e2 url('../img/elementos/io-grad.png') repeat-x center bottom;
+    position: absolute;
+    margin-top:-1px;
+    margin-left:-1px;
+    z-index: 3;
+    width: 37px;
+    box-shadow: inset 1px 1px 2px #FFF;
+}
+.ioCheck.ioON div{
+	 margin-left:40px;
+}
+.ioCheck.ioOFF div{
+	 margin-left:-1px;
+}
+.ioCheck.ioDisabled{
+    opacity:.7;
+}
+.ioCheck.ioDisabled div{
+     background-color:#b3b3b3;
+}
+.ioCheck span{
+	padding: 3px 8px;
+	display: inline-block;
+}
+.ioCheck span.onLabel{color:#FFF;text-shadow:1px 1px 2px #0c2f73

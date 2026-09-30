@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" type="image/x-icon" href="{$siteURL}img/admin-eurotrips.ico">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="{$siteURL}css/basico.css">
+	<link rel="stylesheet" href="{$siteURL}css/eurotrips_panel.css">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/jquery-4.0.0.min.js" integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao=" crossorigin="anonymous"></script>
+	<script src="https://kit.fontawesome.com/609e2e7fda.js" crossorigin="anonymous"></script>
+	<script type="text/javascript" src="{$siteURL}js/app.js"></script>
+	<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+	<title>Eurotrips | Registro</title>
+</head>
+<body>
+<div id="mainContainer" class="container row">
+	<div class="col">
+		
+		<header class="row sombrear">
+			<div class="col logo flex">
+				<div><a href="{$siteURL}"><img src="{$siteURL}img/logo-eurotrips-negro.png" alt="Eurotrips" /></a></div>
+			</div>
+			<div class="col aright">
+				<div class="btn-group btnsIdioma" role="group">
+					<a href="{$siteURL}REGISTRO/ES" class="btn activo">ES</a>
+					<a href="{$siteURL}REGISTRO/EN" class="btn">EN</a>
+				</div>
+			</div>	
+		</header>
+		<section class="mainSection home row">
+			<div class="col col-12 col-md-8 mauto">
+				<div class="innerContent">
+					<div class="cardContainer fullWidth mb1 formDesign registerForm">
+						<h2 class="ps2 pt2 pb1 mb0">Registro</h2>
+							<form class="reg-form" method="post">
+								<div>{$mensaje}</div>
+								<input type="hidden" id="sendArr[language]" name="sendArr[language]" value="es" />
+								<div class="row lineBelow pt1 ps1 bg-post-it">
+									<div class="col">El registro está abierto actualmente para los Grupos de: <span class="strong">{$CURRENT_YEAR_REGISTER}</span></div>			
+								</div>
+								<div class="cf-turnstile"
+								     data-sitekey="{$TURNSTILE_SITE_KEY}">
+								</div>
+								<div class="row gap lineBelow">
+									<div class="col col-12 ps2"><label>Nombre completo cómo aparece en tu pasaporte <span class="obligatorio">*</span>:</label></div>
+									<div class="col col-12 col-md-6 ps2">
+										<input class="requerido" type="text" value="" id="sendArr[name]" name="sendArr[name]" oninput="this.value = normalizarNombre(this.value)" />
+									</div>
+								</div>
+								<div class="row gap lineBelow">
+									<div class="col col-12 ps2"><label>Correo electrónico <span class="obligatorio">*</span>:</label></div>
+									<div id="msgCorreo" class="ps2"></div>
+									<div class="col col-12 col-md-6 ps2">
+										<input class="requerido" type="text" value="" id="sendArr[email]" name="sendArr[email]" />
+									</div>
+								</div>
+								<div class="row gap lineBelow">
+									<div class="col col-12 ps2"><label>Contraseña <span class="obligatorio">*</span>:</label></div>
+									<div class="col col-12 col-md-6 ps2 password-container">
+										<input class="requerido" type="password" value="" id="sendArr[password]" name="sendArr[password]" />
+										<a id="togglePassword">
+									        <i class="fa-solid fa-eye"></i>
+									    </a>
+									</div>
+									<div class="listado ps2 small">
+										<div class="msgPlus"></div>
+										<div class="reglaLongitud texto-alerta">
+											<span class="icono"><i class="fa fa-times"></i></span>
+											<span class="texto">Mínimo 8 caracteres</span>
+										</div>
+										<div class="reglaMinuscula texto-alerta">
+											<span class="icono"><i class="fa fa-times"></i></span>
+											<span class="texto">Una letra minúscula</span>
+										</div>
+										<div class="reglaMayuscula texto-alerta">
+											<span class="icono"><i class="fa fa-times"></i></span>
+											<span class="texto">Una letra mayúscula</span>
+										</div>
+										<div class="reglaNumero texto-alerta">
+											<span class="icono"><i class="fa fa-times"></i></span>
+											<span class="texto">Un número</span>
+										</div>
+										<div class="reglasimbolo texto-alerta">
+											<span class="icono"><i class="fa fa-times"></i></span>
+											<span class="texto">Un símbolo</span>
+										</div>
+									</div>	
+								</div>
+								<div class="row gap lineBelow">
+									<div class="col col-12 ps2"><label>Confirmar contraseña<span class="obligatorio">*</span>:</label></div>
+									<div id="msgConfirmacion" class="small mt-1 ps2"></div>
+									<div class="col col-12 col-md-6 ps2 password-container">
+										<input class="requerido" type="password" value="" id="sendArr[confirmPassword]" name="sendArr[confirmPassword]" />
+										<a id="togglePasswordConfirm">
+									        <i class="fa-solid fa-eye"></i>
+									    </a>
+									</div>
+								</div>
+								<div class="row gap lineBelow">
+									<div class="col col-12 ps2"><label>Fecha de nacimiento <span class="obligatorio">*</span>:</label></div>
+									<div class="col col-12 col-md-4 ps2">
+										<input class="requerido" type="date" value="" id="sendArr[birth_date]" name="sendArr[birth_date]" />
+									</div>
+								</div>
+								<div class="row gap lineBelow">
+									<div class="col col-12 ps2"><label>Edad al momento de viajar <span class="obligatorio">*</span>:</label></div>
+									<div class="col col-12 col-md-4 ps2">
+										<input class="requerido" type="number" value="" id="sendArr[age]" name="sendArr[age]" />
+									</div>
+								</div>
+								<div class="row gap lineBelow">
+									<div class="col col-12 ps2"><label>Número de pasaporte con el que viaja <span class="obligatorio">*</span>:</label></div>
+									<div class="col col-12 col-md-6 ps2">
+										<input class="requerido" type="text" value="" id="sendArr[passport_number]" name="sendArr[passport_number]" />
+									</div>
+								</div>
+								<div class="row gap lineBelow">
+									<div class="col col-12 ps2"><label>Teléfono móvil personal <span class="obligatorio">*</span>:</label></div>
+									<div class="col col-12 col-md-8 ps2 telefono-container">
+									    <select id="sendArr[lada]" name="sendArr[lada]">
+									        <option value="+52">🇲🇽 MX (+52)</option>
+									        <option value="+1">🇺🇸 US (+1)</option>
+									        <option value="+34">🇪🇸 ES (+34)</option>
+									    </select>
+										<input class="requerido" type="tel" maxlength="15" value="" id="sendArr[phone_number]" name="sendArr[phone_number]" />
+									</div>
+								</div>
+								<div class="row gap lineBelow">
+									<div class="col col-12 ps2"><label>Nombre del responsable del pago <span class="obligatorio">*</span>:</label></div>
+									<div class="col col-12 col-md-6 ps2"><input class="requerido" type="text" value="" id="sendArr[parent_name]" name="sendArr[parent_name]" /></div>
+								</div>
+								<div class="row gap lineBelow">
+									<div class="col col-12 ps2"><label>Correo electrónico del responsable del pago <span class="obligatorio">*</span>:</label></div>
+									<div id="msgCorreoResponsable" class="ps2"></div>
+									<div class="col col-12 col-md-6 ps2"><input class="requerido" type="text" value="" id="sendArr[parent_email]" name="sendArr[parent_email]" /></div>
+								</div>
+								<div class="row gap lineBelow">
+									<div class="col col-12 ps2"><label>Teléfono móvil del responsable del pago <span class="obligatorio">*</span>:</label></div>
+									<div class="col col-12 col-md-8 ps2 telefono-container">
+										<select id="sendArr[parent_lada]" name="sendArr[parent_lada]">
+									        <option value="+52">🇲🇽 MX (+52)</option>
+									        <option value="+1">🇺🇸 US (+1)</option>
+									        <option value="+34">🇪🇸 ES (+34)</option>
+									    </select>
+										<input class="requerido" type="tel" maxlength="15" value="" id="sendArr[parent_phone_number]" name="sendArr[parent_phone_number]" />
+									</div>
+								</div>
+								<div class="row gap lineBelow">
+									<div class="col col-12 ps2"><label><span class="ajustar">Entiendo y estoy de acuerdo en que  las  reservas de los servicios contratados son en grupo, de acuerdo al número de integrantes confirmados en cada destino, por lo que no es posible hacer cancelaciones individuales.</span> <span class="obligatorio">*</span></label></div>
+									<div class="col col-12 col-md-3 ps2 texto-azulcielo strong"><input class="requerido" type="checkbox" value="true" id="sendArr[accepted_cancellation_policy]" name="sendArr[accepted_cancellation_policy]" /> Acepto </div>
+								</div>
+								<div class="row gap lineBelow">
+									<div class="col col-12 ps2"><label><span class="ajustar">Por último, el viajero o la viajera son responsables de seguir las reglas y políticas que apliquen de acuerdo al destino y servicio contratado: alojamientos, trenes, ferries, vuelos internos, traslados, etcétera.</span> <span class="obligatorio">*</span></label></div>
+									<div class="col col-12 col-md-3 ps2 texto-azulcielo strong"><input class="requerido" type="checkbox" value="true" id="sendArr[accepted_rules]" name="sendArr[accepted_rules]" /> Acepto </div>
+								</div>
+								<div class="row gap lineBelow">
+									<div class="col col-12 ps2"><label><span class="ajustar">Se les informa que el primer pago {$FEE_TEXT_MXN} corresponde a los gastos administrativos (FEE) y <strong>NO ES REEMBOLSABLE BAJO NINGUNA CIRCUNSTANCIA o MOTIVO</span></strong>. <span class="obligatorio">*</span></label></div>
+									<div class="col col-12 col-md-3 ps2 texto-azulcielo strong"><input class="requerido" type="checkbox" value="true" id="sendArr[accepted_first_payment]" name="sendArr[accepted_first_payment]" /> Acepto </div>
+								</div>
+								<div class="row gap lineBelow">
+									<div class="col col-12 ps2"><label>Política de Privacidad <span class="obligatorio">*</span><br /><br /><span class="ajustar">Acuerdo de Privacidad *<br /><br />En Eurotrips by Chris S.A de C.V., (en adelante “Eurotrips”), con domicilio en Chihuahua 222, Col. Roma, Ciudad de México, Tel. 55 1334 4542, los datos personales de nuestros viajeros y obligados solidarios son tratados de forma estrictamente privada y confidencial, por lo que la obtención, tratamiento, transferencia y ejercicio de los derechos derivados de dichos datos personales, se hace mediante un uso adecuado, legítimo y lícito, salvaguardado permanentemente los principios de licitud, consentimiento, calidad, información, proporcionalidad y responsabilidad. Eurotrips podrá recabar datos suyos y de su obligado solidario para atender o formalizar cualquier tipo de producto o servicio que soliciten o requieran. Eurotrips podrá transferir sus datos personales a terceros mexicanos o extranjeros que le provean de servicios necesarios para su debida operación así como a las organizaciones asociadas, comisionistas o sociedades integrantes del Ramo Turístico.</span> </label></div>
+									<div class="col col-12 col-md-3 ps2 texto-azulcielo strong"><input class="requerido" type="checkbox" value="true" id="sendArr[accepted_privacy_policy]" name="sendArr[accepted_privacy_policy]" /> Acepto </div>
+								</div>
+								<div class="row gap lineBelow">
+									<div class="col col-12 ps2"><label>Acepto la Cotización y la prestación de los Servicios <span class="obligatorio">*</span><br /><br /> </label></div>
+									<div class="col col-12 ps2 texto-azulcielo strong"><input class="requerido" type="checkbox" value="true" id="sendArr[accepted_traveler]" name="sendArr[accepted_traveler]" /> De acuerdo - "El Cliente" </div>
+									<div class="col col-12 ps2 texto-azulcielo strong"><input class="requerido" type="checkbox" value="true" id="sendArr[accepted_parent]" name="sendArr[accepted_parent]" /> De acuerdo - "El Obligado Solidario". ( persona encargada de realizar los pagos del viaje) </div>
+								</div>
+								<div class="row">
+									<div class="col ps2"><button type="submit" class="btn primario" id="sendForm"><i class="fa-solid fa-paper-plane"></i> &nbsp; Enviar</button></div>
+								</div>
+							</form>
+					</div><!--//.cardContainer-->
+				</div>
+			</div>
+		</section>
+	</div>
+</div>
+<script type="text/javascript">
+	const lang = '{$lang}';
+	const clasesContenedores = {
+		longitud:'.reglaLongitud',
+		minuscula:'.reglaMinuscula',
+		mayuscula:'.reglaMayuscula',
+		numero:'.reglaNumero',
+		simbolo:'.reglasimbolo',
+		espacios:'.msgPlus'
+	}
+	$(document).ready(function(){
+		console.log('registro listo');
+		function togglePassword(inputId, buttonId) {
+		    var password = $(inputId);
+		    var icon = $("#" + buttonId).find("i");
+
+		    if (password.attr("type") === "password") {
+		        password.attr("type", "text");
+		        icon.removeClass("fa-eye").addClass("fa-eye-slash");
+		    } else {
+		        password.attr("type", "password");
+		        icon.removeClass("fa-eye-slash").addClass("fa-eye");
+		    }
+		}
+
+		$("#togglePassword").click(function () {
+		    togglePassword('input[name="sendArr[password]', "togglePassword");
+		});
+
+		$("#togglePasswordConfirm").click(function () {
+		    togglePassword('input[name="sendArr[confirmPassword]"]', "togglePasswordConfirm");
+		});
+		$('input[name="sendArr[password]"]').on('keyup', function(){
+		    let resultado = validarPassword($(this).val());
+			console.log(resultado);					
+		});
+		//----------------------------
+		$('input[name="sendArr[password]"], input[name="sendArr[confirmPassword]"]').on('keyup', function () {
+
+		    if ($('input[name="sendArr[confirmPassword]"]').val().length === 0) {
+		        $('#msgConfirmacion')
+		            .html('')
+		            .removeClass('text-success text-danger');
+		        return;
+		    }
+		    if (validarConfirmacionPassword()) {
+		        $('#msgConfirmacion')
+		            .html('<i class="fa fa-check"></i> Las contraseñas coinciden')
+		            .removeClass('text-danger')
+		            .addClass('text-success');
+		    } else {
+		        $('#msgConfirmacion')
+		            .html('<i class="fa fa-times"></i> Las contraseñas no coinciden')
+		            .removeClass('text-success')
+		            .addClass('text-danger');
+		    }
+
+		});
+		//****************************
+		$('input[name="sendArr[email]"]').on('keyup', function(){
+			if (validarCorreo($(this).val())) {
+			    $('#msgCorreo').html('Correo válido').removeClass('texto-alerta').addClass('texto-activo');
+			} else {
+			    $('#msgCorreo').html('Correo inválido').addClass('texto-alerta').removeClass('texto-activo');
+
+			}
+		});
+		//****************************
+		$('input[name="sendArr[parent_email]"]').on('keyup', function(){
+			if (validarCorreo($(this).val())) {
+			    $('#msgCorreoResponsable').html('Correo válido').removeClass('texto-alerta').addClass('texto-activo');
+			} else {
+			    $('#msgCorreoResponsable').html('Correo inválido').addClass('texto-alerta').removeClass('texto-activo');
+
+			}
+		});
+
+		//****************************
+		$('#sendForm').on('click', function(e){
+		    if(!validarFormulario()){
+		    	e.preventDefault();
+		        alert('Hay campos obligatorios sin completar.');
+		        return;
+		    }
+		    // Enviar formulario
+		});
+		//****************************
+		$('.requerido').on('input change', function(e){
+			let $campo = $(this);
+		    if($campo.is(':checkbox')){
+		        if($campo.is(':checked')){
+		            $campo.parent().removeClass('input-error');
+		        }
+		    }else{
+		        if(($campo.val() ?? '').trim() !== ''){
+		            $campo.removeClass('input-error');
+		        }
+		    }
+		});
+
+	});
+
+	function validarPassword(password){
+	    let resultado = {
+	        longitud: password.length >= 8,
+	        minuscula: /[a-z]/.test(password),
+	        mayuscula: /[A-Z]/.test(password),
+	        numero: /\d/.test(password),
+	        simbolo: /[^A-Za-z0-9]/.test(password),
+	        espacios: !/\s/.test(password)
+	    };
+
+		var cantidadValidaciones = 0;
+		var validacionesCorrectas = 0;
+
+	    for(regla in resultado){
+	    	cantidadValidaciones++;
+	    	if(resultado[regla]){
+	    		validacionesCorrectas++;
+	    		console.log(clasesContenedores[regla]);
+	    		if(regla !== 'espacios'){
+	    			$(clasesContenedores[regla]).addClass('texto-activo');
+	    			$(clasesContenedores[regla]).removeClass('texto-alerta');
+	    			$(clasesContenedores[regla]+' .icono i.fa').addClass('fa-check');
+	    			$(clasesContenedores[regla]+' .icono i.fa').removeClass('fa-times');
+	    		}else{
+	    			$(clasesContenedores[regla]).addClass('texto-activo');
+	    			$(clasesContenedores[regla]).removeClass('texto-alerta');
+	    			$(clasesContenedores[regla]).text('');
+	    		}
+	    	}else{
+	    		if(regla !== 'espacios'){
+	    			$(clasesContenedores[regla]).removeClass('texto-activo');
+	    			$(clasesContenedores[regla]).addClass('texto-alerta');
+	    			$(clasesContenedores[regla]+' .icono i.fa').removeClass('fa-check');
+	    			$(clasesContenedores[regla]+' .icono i.fa').addClass('fa-times');
+	    		}else{
+	    			$(clasesContenedores[regla]).removeClass('texto-activo');
+	    			$(clasesContenedores[regla]).addClass('texto-alerta');
+	    			$(clasesContenedores[regla]).text('No debe contener espacios');
+	    		}
+	    	}
+	    }
+
+	    if(validacionesCorrectas == cantidadValidaciones){
+	    	return true;
+	    }else{
+	    	return false;
+	    }
+
+	}
+	function validarConfirmacionPassword(){
+	    let password = $('input[name="sendArr[password]"]').val();
+	    let confirmacion = $('input[name="sendArr[confirmPassword]"]').val();
+
+	    if (confirmacion.length === 0) {
+	        return false;
+	    }
+
+	    return password === confirmacion;
+	}
+	function validarCorreo(correo){
+	    correo = (correo ?? '').trim();
+	    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(correo);
+	}
+
+	function validarFormulario(){
+
+	    let valido = true;
+
+	    $('.requerido').each(function(){
+
+	        let $campo = $(this);
+	        let valor = ($campo.val() ?? '').trim();
+
+	        if($campo.is(':checkbox')){
+
+	            if(!$campo.is(':checked')){
+	                $campo.parent().addClass('input-error');
+	                valido = false;
+	            }else{
+	                $campo.parent().removeClass('input-error');
+	            }
+
+	        }else{
+
+	            if(valor === ''){
+	                $campo.addClass('input-error');
+	                valido = false;
+	            }else{
+	                $campo.removeClass('input-error');
+	            }
+
+	        }
+
+	    });
+
+	    // Correo
+	    if(!validarCorreo($('input[name="sendArr[email]"]').val())){
+	        valido = false;
+	    }
+
+	    // Correo
+	    if(!validarCorreo($('input[name="sendArr[parent_email]"]').val())){
+	        valido = false;
+	    }
+
+	    // Contraseña
+	    if(!validarPassword($('input[name="sendArr[password]"]').val())){
+	        valido = false;
+	    }
+
+	    // Confirmación
+	    if(!validarConfirmacionPassword()){
+	        valido = false;
+	    }
+
+	    return valido;
+	}
+	function normalizarNombre(valor) {
+	    return valor
+	        .replace(/[ÁÀÄÂÃ]/g, 'A')
+	        .replace(/[ÉÈËÊ]/g, 'E')
+	        .replace(/[ÍÌÏÎ]/g, 'I')
+	        .replace(/[ÓÒÖÔÕ]/g, 'O')
+	        .replace(/[ÚÙÜÛ]/g, 'U')
+	        .replace(/[áàäâã]/g, 'A')
+	        .replace(/[éèëê]/g, 'E')
+	        .replace(/[íìïî]/g, 'I')
+	        .replace(/[óòöôõ]/g, 'O')
+	        .replace(/[úùüû]/g, 'U')
+	        .replace(/[Ññ]/g, 'N')
+	        .toUpperCase();
+	}
+</script>
+</body>
+</html>

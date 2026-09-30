@@ -1,0 +1,255 @@
+<script src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+	google.charts.load('current', {
+    	packages: ['corechart']
+	});
+
+	google.charts.setOnLoadCallback(drawChart);
+
+	function drawChart() {
+
+
+	    const totalCost_EUR = parseFloat({$COSTO_TOTAL_EUR});
+	    const totalPaid_EUR = parseFloat({$PAGO_TOTAL_EUR});
+	    const paidPercentage_EUR = parseFloat({$PORCENTAJE_EUR});
+
+	    const chartData_EUR = google.visualization.arrayToDataTable([
+		    ['Concepto', 'Costo total', { role: 'annotation' }, 'Total pagado', { role: 'annotation' }, { role: 'annotation' }],
+		    ['', totalCost_EUR,
+		    	'€' + totalCost_EUR.toLocaleString('es-ES', {
+		            minimumFractionDigits: 2,
+    				maximumFractionDigits: 2
+		        }),
+		        totalPaid_EUR, 
+		    	'€' + totalPaid_EUR.toLocaleString('es-ES', {
+		            minimumFractionDigits: 2,
+    				maximumFractionDigits: 2
+		        }), 
+		    	paidPercentage_EUR + '%']
+		]);
+
+	    const options_EUR = {
+		    colors: ['#1972B9', '#18C9D3'],
+		    legend: {
+		        position: 'bottom'
+		    },
+		    vAxis: {
+		        format: '€#,##0.00',
+		        viewWindow: {
+		            min: 0
+		        }
+		    },
+		    annotations: {
+		        alwaysOutside: true,
+		        textStyle: {
+			        fontSize: 15
+			    }
+		    }
+		};
+
+	    const chart_EUR = new google.visualization.ColumnChart(
+	        document.getElementById('chartPagosEUR')
+	    );
+
+	    chart_EUR.draw(chartData_EUR, options_EUR);
+
+
+
+
+	    const totalCost_USD = parseFloat({$COSTO_TOTAL_USD});
+	    const totalPaid_USD = parseFloat({$PAGO_TOTAL_USD});
+	    const paidPercentage_USD = parseFloat({$PORCENTAJE_USD});
+
+	    const chartData_USD = google.visualization.arrayToDataTable([
+		    ['Concepto', 'Costo total', { role: 'annotation' }, 'Total pagado', { role: 'annotation' }, { role: 'annotation' }],
+		    ['', totalCost_USD, 
+		    	'$' + totalCost_USD.toLocaleString('en-US', {
+		            minimumFractionDigits: 2,
+    				maximumFractionDigits: 2
+		        }),
+		        totalPaid_USD , 
+		    	'$' + totalPaid_USD.toLocaleString('en-US', {
+		            minimumFractionDigits: 2,
+    				maximumFractionDigits: 2
+		        }), 
+		        paidPercentage_USD + '%']
+		]);
+
+	    const options_USD = {
+		    colors: ['#1972B9', '#18C9D3'],
+		    legend: {
+		        position: 'bottom'
+		    },
+		    vAxis: {
+		        format: '€#,##0.00',
+		        viewWindow: {
+		            min: 0
+		        }
+		    },
+		    annotations: {
+		        alwaysOutside: true,
+		        textStyle: {
+			        fontSize: 15
+			    }
+		    }
+		};
+
+	    const chart_USD = new google.visualization.ColumnChart(
+	        document.getElementById('chartPagosUSD')
+	    );
+
+	    chart_USD.draw(chartData_USD, options_USD);
+	}
+
+</script>
+<div class="col">
+	<div class="innerContent">
+		<div class="cardContainer fullWidth mb2">
+			<div class="row mb2">
+				<div class="col aright texto-grismedio small">Mostrando reportes con año de viaje: <span class="strong">{$YEAR_FILTER}</span></div>
+			</div>
+			<div class="row">
+				<div class="col chart-title">Costo total vs. pagos</div>
+			</div>
+			<div class="row">
+				<div class="col col-6">
+					<div class="chart-subtitle">Viajes en EUR</div>
+					<div id="chartPagosEUR" style="width: 100%;height:350px;"></div>
+					<div class="acenter">
+						<table class="dataTable mauto">
+							<thead>
+								<tr>
+									<th>Viajes</th>
+									<th>Viajeros</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>{$COUNT_VIAJES_EUR}</td>
+									<td>{$COUNT_VIAJEROS_EUR}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="col col-6">
+					<div class="chart-subtitle">Viajes en USD</div>
+					<div id="chartPagosUSD" style="width: 100%;height:350px;"></div>
+					<div class="acenter">
+						<table class="dataTable mauto">
+							<thead>
+								<tr>
+									<th>Viajes</th>
+									<th>Viajeros</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>{$COUNT_VIAJES_USD}</td>
+									<td>{$COUNT_VIAJEROS_USD}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<nav id="paginacionPantalla">
+					</nav>
+				</div>
+			</div>	
+		</div>
+
+		<div class="cardContainer fullWidth mb2">
+			<div class="row mt1">
+				<div class="col chart-title">Costo total y pagado por grupo</div>
+			</div>
+			<div class="row mt1 mb2">
+				<div class="col col-12">{$TABLA_GRUPOS_PAGOS}</div>
+			</div>
+		</div>
+
+		<div class="cardContainer fullWidth mb2">
+			<div class="row mt1">
+				<div class="col chart-title">Generación de reportes en Excel</div>
+			</div>
+			<div class="row mt1 mb2 gap">
+				<div class="col col-3">
+					<label for="reporte_anio">Año:</label>
+					<select name="reporte_anio" id="reporte_anio">
+						{$ANIOS_OPTIONS}
+					</select>
+				</div>
+				<div class="col col-3">
+					<label for="reporte_grupo">Grupo:</label>
+					<div id="comboGrupos"></div>
+				</div>
+				<div class="col col-3">
+					<br />
+					<a class="btn primario hidden" id="btnGenerarExcel"><i class="fa fa-file-excel"></i> Generar reporte Excel</a>
+				</div>
+				<div class="col col-3"></div>
+			</div>
+		</div>
+
+	</div>
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+	console.log('Init...');
+	$('#reporte_anio').change(function(){
+		const anio = $(this).val();
+		getGrupos(anio);
+	});
+	$('#btnGenerarExcel').click(generarReporteExcel);
+	getGrupos({$YEAR_FILTER});
+});
+function getGrupos(filter){
+	$("#comboGrupos").html("<div class=' redondear setpadding5'><img src='{$siteURL}img/loader_world_1.gif' width='45' /></div>");
+	var envioData = new FormData();
+	envioData.append("action",'getComboGrupos');													
+	envioData.append("filter",filter);
+	console.log('getComboGrupos()');
+	$.ajax({
+		url: "{$siteURL}webservice/acciones.php",
+		type:"POST",
+		processData: false,//tanto processData como contentType deben estar en false para que funcione FormData
+		contentType: false,
+		data:envioData,
+		cache:false,
+		dataType:"json",
+		success: function(respuesta){
+			var dataset = [];
+			if(respuesta.success){
+				$("#comboGrupos").html(respuesta.data.codigo);
+				if(respuesta.data.totalRegistros > 0){
+					$('#btnGenerarExcel').removeClass('hidden');
+				}else{
+					$('#btnGenerarExcel').addClass('hidden');
+				}
+			}else{
+				texto = "<div class='bg-warning'>"+respuesta.error+"</div>";
+				if(respuesta.data.httpCode == 401 || respuesta.data.httpCode == 403){
+					document.location.href='{$siteURL}SALIR';
+				}
+			}
+		},
+		error: function(){
+			$("#comboGrupos").html('');
+			if (typeof respuesta !== 'undefined') {
+				$("#comboGrupos").html(respuesta.data.error);
+				console.log(respuesta.data.error);
+			} else {
+			}
+		}
+	});
+}
+function generarReporteExcel(){
+	let trip_id = $('#comboGrupos option:selected').val();
+	//console.log(trip_id);
+	let URL = '{$siteURL}sys_reports/excel-download-xlsx.php?trip_id='+trip_id;
+	//console.log(URL);
+	document.location.href=URL;
+}
+</script>

@@ -1,0 +1,33 @@
+<div class="row mt1">
+	<div class="col contornear">
+		<div class="primario pm5">
+			<h4 class="texto-blanco">Viaje</h4>
+		</div>
+		<div class="anotacion">Costo total del viaje</div>
+		<div class="cantidadTotal">{$cost}</div>
+		<div class="porcentaje">
+			<div class="barra">
+				<div class="porcentajeAdeudo" style="width:{$porcentajeAdeudo}%;" title="Adeudo: {$porcentajeAdeudo}%" ></div>
+				<div class="porcentajePagado" style="width:{$porcentajePagado}%;" title="Pagado: {$porcentajePagado}%"></div>
+			</div>
+		</div>
+		<div class="aright nomenclatura">
+			<table class="aright tableNomenclatura">
+				<tr>
+					<td class="bg-aqua">&nbsp;</td>
+					<td class="small texto-grismedio">Pagado (validado):</td>
+					<td class="small">{$totalPagadoLabel}</td>
+				</tr>
+				<tr>
+					<td class="bg-marron">&nbsp;</td>
+					<td class="small texto-grismedio">Adeudo:</td>
+					<td class="small">{$totalAdeudoLabel}</td>
+				</tr>
+			</table>
+		</div>
+		{$sigFechaPago}
+		<div class="dataTableContainer">
+			{$tablaPagos}
+		</div>
+	</div>
+</div>

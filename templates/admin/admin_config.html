@@ -1,0 +1,111 @@
+<div class="col">
+	<div class="innerContent">
+		<div class="cardContainer fullWidth mb1 controles">
+			<div class="row">
+				<div class="col"><h3>Registro de Tipo de cambio</h3></div>
+			</div>
+			{$registroTipoCambio} 
+			<div class="row">
+				<div class="col">
+					<fieldset><legend>Histórico (5 días)</legend>
+						<div class="row">
+							<div class="col col-12 col-md-1"></div>
+							<div class="col col-12 col-md-4">
+								<label>Euros</label>
+								<div class=" dataTableContainer">
+									{$tablaEUR}
+								</div>
+							</div>
+							<div class="col col-12 col-md-2"></div>
+							<div class="col col-12 col-md-4">
+								<label>Dólares</label>
+								<div class=" dataTableContainer">
+									{$tablaUSD}
+								</div>
+							</div>
+							<div class="col col-12 col-md-1"></div>
+						</div>
+						
+					</fieldset>
+				</div>
+			</div>
+		</div><!--//.cardContainer-->
+		{$config_variables}
+		{$moduloUsuarios}
+	</div>
+</div>
+<script type="text/javascript">
+	$(document).ready(function(){
+		console.log('Init...');
+		$('#euros,#dolares').on('input', function () {
+		    // Permitir sólo dígitos y un punto
+		    this.value = this.value
+		        .replace(/[^0-9.]/g, '')
+		        .replace(/(\..*)\./g, '$1');
+		});
+		$('#euros,#dolares').on('blur', function () {
+		    let valor = parseFloat(this.value.replace(',', '.'));
+			if (isNaN(valor)) {
+			    valor = 0;
+			}
+			this.value = valor.toFixed(2);
+		});
+		//****************************
+		$('.requerido').on('input change', function(e){
+			let $campo = $(this);
+		    if($campo.is(':checkbox')){
+		        if($campo.is(':checked')){
+		            $campo.parent().removeClass('input-error');
+		        }
+		    }else{
+		        if(($campo.val() ?? '').trim() !== ''){
+		            $campo.removeClass('input-error');
+		        }
+		    }
+		});
+		//****************************
+		$('#sendForm').on('click', function(e){
+		    if(!validarFormulario()){
+		    	e.preventDefault();
+		        alert('Hay campos obligatorios sin completar.');
+		        return;
+		    }
+		    // Enviar formulario
+		});
+
+	});
+	
+	function validarFormulario(){
+
+	    let valido = true;
+
+	    $('.requerido').each(function(){
+
+	        let $campo = $(this);
+	        let valor = ($campo.val() ?? '').trim();
+
+	        if($campo.is(':checkbox')){
+
+	            if(!$campo.is(':checked')){
+	                $campo.parent().addClass('input-error');
+	                valido = false;
+	            }else{
+	                $campo.parent().removeClass('input-error');
+	            }
+
+	        }else{
+
+	            if(valor === ''){
+	                $campo.addClass('input-error');
+	                valido = false;
+	            }else{
+	                $campo.removeClass('input-error');
+	            }
+
+	        }
+
+	    });
+
+	    return valido;
+	}
+</script>

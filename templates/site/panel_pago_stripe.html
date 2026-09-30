@@ -1,0 +1,16 @@
+<div class="mb1">
+	<label for="montoPagoEnLinea">Cantidad del <span class="strong texto-verdeagua-ui">costo del viaje</span> que desea pagar</label>
+	<div class="small texto-grismedio"><span>Tipo de cambio de</span> {$fechaTipoCambio}: <span class="texto-negro nowrap">1 {$moneda} = {$rate} MXN</span></div>
+</div>
+<div class="responseAlerts"></div>
+<form id="pagoStripeForm" method="post" enctype="multipart/form-data" action="{$siteURL}PAGOS/stripe/">
+	
+	<div class="mb1 row">
+		<div class="col col-1 acenter">{$simboloMoneda}</div>
+		<div class="col acenter">
+			<input type="text" id="montoPagoEnLinea" name="montoPagoEnLinea" value="{$pagoMinimoRaw}" />
+		</div>
+		<div class="col col-2 acenter">{$moneda}</div>
+	</div>
+	<button type="submit" class="btn primario" id="pagoStripe"><span>Pagar en línea con</span> &nbsp; <img src="{$siteURL}img/stripe-logo-blanco.png" width="55" ></button>
+</form>

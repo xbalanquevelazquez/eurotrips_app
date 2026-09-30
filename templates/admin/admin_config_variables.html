@@ -1,0 +1,99 @@
+<div class="cardContainer fullWidth mb2">
+	<div class="row">
+		<div class="col"><h3>Configuración de variables</h3></div>
+	</div>
+	<div class="controles">
+		<div class="row">
+			<div class="col col-6">
+
+				<div class="row">
+					<div class="col"><label>Año para nuevos grupos (viajeros y viajes):</label></div>
+				</div>
+				<div class="row mb2">
+					<div class="respuesta CURRENT_YEAR_REGISTER"></div>
+					<div class="col col-12 col-md-6">
+						<input type="text" name="CURRENT_YEAR_REGISTER" id="CURRENT_YEAR_REGISTER" value="{$CURRENT_YEAR_REGISTER}" /> 
+					</div>
+					<div class="col col-1"></div>
+					<div class="col col-12 col-md-5 aleft">
+						<a class="btn primario btnSet" data-id="CURRENT_YEAR_REGISTER"><i class="fa-solid fa-floppy-disk"></i> Guardar</a>
+					</div>
+				</div>
+
+			</div>
+			<div class="col col-6">
+
+				<div class="row">
+					<div class="col"><label>Filtro para mostrar registros (año):</label></div>
+				</div>
+				<div class="row mb2">
+					<div class="respuesta YEAR_FILTER"></div>
+					<div class="col col-12 col-md-6">
+						<input type="text" name="YEAR_FILTER" id="YEAR_FILTER" value="{$YEAR_FILTER}" /> 
+					</div>
+					<div class="col col-1"></div>
+					<div class="col col-12 col-md-5 aleft">
+						<a class="btn primario btnSet" data-id="YEAR_FILTER"><i class="fa-solid fa-floppy-disk"></i> Guardar</a>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$(document).ready(function(){
+		console.log('Configs...');
+
+		$('.btnSet').click(function(){
+			var param = $(this).attr('data-id');
+			var valor = $('#'+param).val().trim();
+			console.log('param: '+param+' | valor: '+valor);
+			setConfig(param,valor);
+		});
+	});
+	function setConfig(param,valor){
+		$(".respuesta."+param).html('');
+		var envioData = new FormData();
+		envioData.append("action",'setConfig');													
+		envioData.append("param",param);
+		envioData.append("valor",valor);
+
+		console.log('setConfig()');
+		$.ajax({
+			url: "{$siteURL}webservice/acciones.php",
+			type:"POST",
+			processData: false,//tanto processData como contentType deben estar en false para que funcione FormData
+			contentType: false,
+			data:envioData,
+			cache:false,
+			dataType:"json",
+			success: function(respuesta){
+				var texto = '';
+				if(respuesta.success){
+					$(".respuesta."+param).html('');
+					texto = "<div class='alerta verde small mb1 col-10'>"+respuesta.data.codigo+"</div>";
+					
+				}else{
+					texto = "<div class='alerta roja small mb1 col-10'>"+respuesta.error+"</div>";
+					if(respuesta.data.httpCode == 401 || respuesta.data.httpCode == 403){
+						document.location.href='{$siteURL}SALIR';
+					}
+				}
+				console.log('param response: '+param);
+				console.log(texto);
+				$(".respuesta."+param).html(texto);
+			},
+			error: function(){
+				$(".respuesta."+param).html('');
+				if (typeof respuesta !== 'undefined') {
+				    //console.log("La variable existe y es: " + respuesta);
+					$(".respuesta."+param).html("<div class='alerta roja small mb1 col-10'>"+respuesta.data.error+"</div>");
+					console.log(respuesta.data.error);
+				} else {
+				    //document.location.href="{$siteURL}SALIR";
+				}
+			}
+		});
+	}
+</script>

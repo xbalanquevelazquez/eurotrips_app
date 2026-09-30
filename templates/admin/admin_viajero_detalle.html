@@ -1,0 +1,307 @@
+{$mensaje}
+<div class="col">
+	<div class="innerContent">
+		<div class="cardContainer fullWidth mb1">
+			<div class="row">
+				<div class="col">
+					<a href="{$returnLink}" class="btn navegacion"><i class="fa-solid fa-chevron-left"></i> Regresar</a>
+				</div>
+			</div>
+		</div>
+		<div class="cardContainer fullWidth mb1 formDesign">
+			<fieldset id="deselector"><legend>Viajero</legend>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Nombre:</label></div>
+					<div class="col strong">{$name}</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Correo electrónico:</label></div>
+					<div class="col">{$email}</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Grupo/Viaje:</label></div>
+					<div class="col">
+						<input type="hidden" id="sendArr[trip_id]" name="sendArr[trip_id]" value="{$trip_id}" />
+						<div class="mensajeGrupo"></div>
+						<div id="trip_selected" style="display:none;">{$trip_selected}</div>
+						<div id="trip_search_container" class="{$consultorHidden}">
+
+						    <input
+						        type="text"
+						        id="trip_search"
+						        autocomplete="off"
+						        placeholder="Buscar grupo...">
+
+						    <div id="trip_results" class="autocomplete"></div>
+
+						</div>
+					</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Fecha de nacimiento:</label></div>
+					<div class="col">{$birth_date}</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Edad al momento de viajar:</label></div>
+					<div class="col">{$age} años</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Número de pasaporte con el que viaja:</label></div>
+					<div class="col">{$passport_number}</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Teléfono móvil:</label></div>
+					<div class="col">{$lada_icon} {$lada} {$phone_number}</div>
+				</div>
+			</fieldset>
+			<fieldset><legend>Tutor/responsable del pago</legend>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Nombre:</label></div>
+					<div class="col">{$parent_name}</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Correo electrónico:</label></div>
+					<div class="col">{$parent_email}</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Teléfono móvil:</label></div>
+					<div class="col">{$parent_lada_icon} {$parent_lada} {$parent_phone_number}</div>
+				</div>
+			</fieldset>
+			<fieldset><legend>Asistencia de viaje</legend>
+				<form id="dataForm" method="post" enctype="multipart/form-data" action="">
+					<div class="row gap">
+						<div class="col col-3 aright"><label>Número de asistencia de viaje:</label></div>
+						<div class="col col-4">
+							<span class="{$consultorShow}">{$support_number}</span>
+							<input type="text" id="sendArray[support_number]" name="sendArray[support_number]" value="{$support_number}" class="{$consultorHidden}" />
+						</div>
+					</div>
+					<div class="row gap">
+						<div class="col col-3 aright"><label>Archivo de asistencia de viaje:</label></div>
+						<div class="col">
+							<input type="file" id="assistanceFile" name="assistanceFile"  class="document-upload {$consultorHidden}" accept=".pdf,.jpg,.jpeg,.png" style="display:none;">
+							<a class="btn primario btnUpload {$btnUploadShow} {$consultorHidden}" data-input="assistanceFile"><i class="fa-solid fa-upload"></i></a>
+							<span id="assistanceFile_name" class="fileName">{$assistanceChip}</span>
+						</div>
+					</div>
+					<div class="row gap">
+						<div class="col col-3 aright"><label></label></div>
+						<div class="col">
+
+							<button type="submit" class="btn primario {$consultorHidden}" id="sendForm"><i class="fa-solid fa-floppy-disk"></i> &nbsp; Guardar</button>
+						</div>
+					</div>
+				</form>
+			</fieldset>
+		</div><!--//.cardContainer-->
+		<div class="cardContainer fullWidth mb2">
+			<div class="row">
+				<div class="col"><h3>Documentos</h3></div>
+			</div>
+			<div class="row">
+				<div class="col dataTableContainer">
+					<table class="dataTable fullWidth">
+						<thead>
+							<tr>
+								<th class="aleft">Fecha</th>
+								<th>Tipo</th>
+								<th>Estatus</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							{$tablaDocumentos}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="cardContainer fullWidth mb2">
+			<div class="row">
+				<div class="col"><h3>Historial de pagos</h3></div>
+			</div>
+			<h4 class="primario texto-blanco pm5">Viaje</h4>
+			<div class="row">
+				<div class="col dataTableContainer mt0">
+					{$tablaPagos}
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	const viajes = {$viajesArr};
+	const traveler_id = '{$traveler_id}';
+	const traveler_data = {$traveler_data};
+	const trip_id = '{$trip_id}';
+	const trip_name = '{$trip_name}';
+	const trip_selected = '{$trip_selected}';
+	$('.btnUpload').on('click', function(){
+	    let input = $(this).data('input');
+	    console.log(input);
+	    $('#' + input).click();
+	});
+	$('.document-upload').on('change', function(){
+	    if(this.files.length == 0) return;
+	    let archivo = this.files[0];
+	    let id = this.id;
+		let permitidos = ['pdf','jpg','jpeg','png'];
+		let extension = archivo.name.split('.').pop().toLowerCase();
+
+
+	    if(!permitidos.includes(extension)){
+		    alert('Formato no permitido.');
+		    $(this).val('');
+		    return;
+		}
+
+		if(archivo.size > 2 * 1024 * 1024){
+		    alert('El archivo excede el tamaño permitido (2 MB).');
+		    $(this).val('');
+		    return;
+		}
+		console.log(id);
+	    $('#' + id + '_name').html(
+	    	'<span class="chip mt1">'+
+	        archivo.name +
+	        ' <a href="#" class="removeFile" data-input="' + id + '">✕</a>'+
+	        '</span>'
+	    );
+	    $('.btnUpload').addClass('hidden');
+	});
+	$(document).on('click','.removeFile',function(e){
+	    e.preventDefault();
+	    let input = $(this).data('input');
+	    $('#' + input).val('');
+	    $('#' + input + '_name').empty();
+	    $('.btnUpload').removeClass('hidden');
+	});
+
+
+	$('#trip_search').on('input', function(){
+		$('[id="sendArr[trip_id]"]').val('');
+	    let texto = $(this).val().toLowerCase().trim();
+	    $('#trip_results').empty();
+	    if(texto.length < 0)
+	        return;
+	    viajes.forEach(function(viaje){
+	        if(viaje.trip_name.toLowerCase().includes(texto)){
+	        	var simboloMoneda = '';
+	        	var moneda = '';
+	        	switch(viaje.currency){
+	                case 1:
+	                    simboloMoneda = '€';
+	                    moneda = 'EUR';
+	                    break;
+	                case 2:
+	                    simboloMoneda = '$';
+	                    moneda = 'USD';
+	                    break;
+	            }
+	            $('#trip_results').append(
+	                '<div class="trip-item" data-id="' + viaje.trip_id + '">' +
+	                    viaje.trip_name + ' <span class="small texto-grismedio">['+viaje.status+'] [costo: '+simboloMoneda+' '+(viaje.cost ?? '')+' '+moneda+']</span>' +
+	                '</div>'
+	            );
+	        }
+	    });
+	});
+	$(document).on('click', '.trip-item', function(){
+	    let id = $(this).data('id');
+	    let nombre = $(this).html();
+
+	    $('[id="sendArr[trip_id]"]').val(id);
+
+	    $('#trip_selected').html(
+	        '<div class="trip-chip">' +
+	            '<span>' + nombre + '</span>' +
+	            '<button type="button" class="trip-remove">&times;</button>' +
+	        '</div>'
+	    );
+
+	    $('#trip_selected').show();
+
+	    $('#trip_search').val('');
+	    $('#trip_results').empty();
+
+	    $('#trip_search_container').hide();
+
+	    setGrupo($('[id="sendArr[trip_id]"]').val(),traveler_id,traveler_data,'setGrupo','mensajeGrupo');
+
+	});
+	$(document).ready(function(){
+		if(trip_id !== ''){
+			let id = trip_id;
+
+		    $('[id="sendArr[trip_id]"]').val(id);
+
+		    $('#trip_selected').html(trip_selected);
+
+		    $('#trip_selected').show();
+
+		    $('#trip_search').val('');
+		    $('#trip_results').empty();
+
+		    $('#trip_search_container').hide();
+		}
+
+		$('#deselector').click(function(){
+			$('#trip_search').val('');
+			$('#trip_results').empty();
+		});
+		$(document).on('keydown', function(e){
+		    if(e.key === 'Escape'){
+		        //console.log('Se presionó ESC');
+		        $('#trip_search').val('');
+		        $('#trip_results').empty();
+		    }
+		});
+	});
+
+	$(document).on('click', '.trip-remove', function(){
+
+	    $('[id="sendArr[trip_id]"]').val('');
+
+	    $('#trip_selected')
+	        .empty()
+	        .hide();
+
+	    $('#trip_search_container').show();
+
+	    $('#trip_search').focus();
+
+	});
+
+
+	function setGrupo(id,traveler_id,traveler_data,accion,msgBox){
+		var envioData = new FormData();
+		envioData.append("action",accion);													
+		envioData.append("id",id);
+		envioData.append("traveler_id",traveler_id);
+		envioData.append("traveler_data",JSON.stringify(traveler_data));
+		$.ajax({
+			url: siteURL+"webservice/acciones.php",
+			type:"POST",
+			processData: false,//tanto processData como contentType deben estar en false para que funcione FormData
+			contentType: false,
+			data:envioData,
+			cache:false,
+			dataType:"json",
+			success: function(respuesta){
+				var texto = '';
+				if(respuesta.success){
+					texto = '<span class="alerta verde">Se guardó el dato</span>';
+				}else{
+					texto = "<div class='bg-warning'>"+respuesta.error+"</div>";
+					if(respuesta.data.httpCode == 401 || respuesta.data.httpCode == 403){
+						document.location.href='{$siteURL}SALIR';
+					}
+				}
+				$("."+msgBox).html(texto);
+				$(".alerta").delay(3000).fadeOut();
+			}
+		});
+	}
+</script>

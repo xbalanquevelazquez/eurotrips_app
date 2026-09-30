@@ -1,0 +1,75 @@
+/****** Oxygen ******/
+@font-face {
+    font-family: "Oxygen";
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/Oxygen/oxygen-regular-webfont.woff2') format('woff2'), 
+         url('../fonts/Oxygen/oxygen-regular-webfont.woff') format('woff'), /* Modern Browsers */
+         url('../fonts/Oxygen/oxygen-regular-webfont.ttf')  format('truetype'); /* Legacy iOS */
+}
+@font-face {
+    font-family: "Oxygen";
+    font-style: normal;
+    font-weight: 600;
+    src: url('../fonts/Oxygen/oxygen-bold-webfont.woff2') format('woff2'), 
+         url('../fonts/Oxygen/oxygen-bold-webfont.woff') format('woff'), /* Modern Browsers */
+         url('../fonts/Oxygen/oxygen-bold-webfont.ttf')  format('truetype'); /* Legacy iOS */
+}
+@font-face {
+    font-family: "Oxygen";
+    font-style: normal;
+    font-weight: 200;
+    src: url('../fonts/Oxygen/oxygen-light-webfont.woff2') format('woff2'), 
+         url('../fonts/Oxygen/oxygen-light-webfont.woff') format('woff'), /* Modern Browsers */
+         url('../fonts/Oxygen/oxygen-light-webfont.ttf')  format('truetype'); /* Legacy iOS */
+}
+
+
+/*UBUNTU GOOGLE FONTS*/
+.ubuntu-light {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.ubuntu-regular {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.ubuntu-medium {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.ubuntu-bold {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.ubuntu-light-italic {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.ubuntu-regular-italic {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.ubuntu-medium-italic {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.ubuntu-bold-italic {
+  font-family: "Ubuntu", sans-serif;
+  font-weight: 700;
+  font-style: italic;
+}

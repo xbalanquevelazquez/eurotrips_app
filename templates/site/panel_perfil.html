@@ -1,0 +1,155 @@
+<div class="mensaje">{$mensaje}</div>
+<div class="col">
+	<div class="innerContent">
+		<div class="cardContainer fullWidth mb1 formDesign">
+			<div class="row gap mt2">
+				<div class="col col-3 aright"><label>Nombre completo:</label></div>
+				<div class="col">
+					{$NOMBRE}
+				</div>
+			</div>
+			<div class="row gap">
+				<div class="col col-3 aright"><label>Correo registrado:</label></div>
+				<div class="col">
+					{$EMAIL}
+				</div>
+			</div>
+			<form class="registroEdit" method="post">
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Fecha de nacimiento <span class="obligatorio">*</span>:</label></div>
+					<div class="col col-12 col-md-2">
+						<input class="requerido" type="date" value="{$birth_date}" id="sendArr[birth_date]" name="sendArr[birth_date]" />
+					</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Edad al momento de viajar <span class="obligatorio">*</span>:</label></div>
+					<div class="col col-12 col-md-3">
+						<input class="requerido" type="number" value="{$age}" id="sendArr[age]" name="sendArr[age]" />
+					</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Número de pasaporte con el que viaja <span class="obligatorio">*</span>:</label></div>
+					<div class="col col-12 col-md-3">
+						<input class="requerido" type="text" value="{$passport_number}" id="sendArr[passport_number]" name="sendArr[passport_number]" />
+					</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Teléfono móvil personal <span class="obligatorio">*</span>:</label></div>
+					<div class="col col-12 col-md-3 telefono-container">
+						<select id="sendArr[lada]" name="sendArr[lada]">
+					        <option value="+52" {$op_LADA_MX}>🇲🇽 MX (+52)</option>
+					        <option value="+1" {$op_LADA_US}>🇺🇸 US (+1)</option>
+					        <option value="+34" {$op_LADA_ES}>🇪🇸 ES (+34)</option>
+					    </select>
+						<input class="requerido" type="text" value="{$phone_number}" id="sendArr[phone_number]" name="sendArr[phone_number]" />
+					</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Nombre del responsable del pago <span class="obligatorio">*</span>:</label></div>
+					<div class="col col-12 col-md-3"><input class="requerido" type="text" value="{$parent_name}" id="sendArr[parent_name]" name="sendArr[parent_name]" /></div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Correo electrónico del responsable del pago:</label></div>
+					<div class="col col-12 col-md-3">
+						<div id="msgCorreoResponsable" class="small"></div>
+						<input class="requerido" type="text" value="{$parent_email}" id="sendArr[parent_email]" name="sendArr[parent_email]" />
+					</div>
+				</div>
+				<div class="row gap">
+					<div class="col col-3 aright"><label>Teléfono móvil del responsable del pago <span class="obligatorio">*</span>:</label></div>
+					<div class="col col-12 col-md-3 telefono-container">
+						<select id="sendArr[parent_lada]" name="sendArr[parent_lada]">
+					        <option value="+52" {$op_parent_LADA_MX}>🇲🇽 MX (+52)</option>
+					        <option value="+1" {$op_parent_LADA_US}>🇺🇸 US (+1)</option>
+					        <option value="+34" {$op_parent_LADA_ES}>🇪🇸 ES (+34)</option>
+					    </select>
+						<input class="requerido" type="text" value="{$parent_phone_number}" id="sendArr[parent_phone_number]" name="sendArr[parent_phone_number]" />
+					</div>
+				</div>
+				<div class="row">
+					<div class="col">
+						<button type="submit" class="btn primario" id="sendForm"><i class="fa-solid fa-floppy-disk"></i> Guardar</button>
+					</div>
+				</div>
+			</form>
+		</div><!--//.cardContainer-->
+	</div>
+</div>
+<script>
+$(document).ready(function(){
+	console.log('Init screen');
+	//****************************
+	$('input[name="sendArr[parent_email]"]').on('keyup', function(){
+		if (validarCorreo($(this).val())) {
+		    $('#msgCorreoResponsable').html('Correo válido').removeClass('texto-alerta').addClass('texto-activo');
+		} else {
+		    $('#msgCorreoResponsable').html('Correo inválido').addClass('texto-alerta').removeClass('texto-activo');
+
+		}
+	});
+	//****************************
+	$('#sendForm').on('click', function(e){
+	    if(!validarFormulario()){
+	    	e.preventDefault();
+	        alert('Hay campos obligatorios sin completar.');
+	        return;
+	    }
+	    // Enviar formulario
+	});
+	//****************************
+	$('.requerido').on('input change', function(e){
+		let $campo = $(this);
+	    if($campo.is(':checkbox')){
+	        if($campo.is(':checked')){
+	            $campo.parent().removeClass('input-error');
+	        }
+	    }else{
+	        if(($campo.val() ?? '').trim() !== ''){
+	            $campo.removeClass('input-error');
+	        }
+	    }
+	});
+});
+function validarCorreo(correo){
+    correo = (correo ?? '').trim();
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(correo);
+}
+function validarFormulario(){
+
+    let valido = true;
+
+    $('.requerido').each(function(){
+
+        let $campo = $(this);
+        let valor = ($campo.val() ?? '').trim();
+
+        if($campo.is(':checkbox')){
+
+            if(!$campo.is(':checked')){
+                $campo.parent().addClass('input-error');
+                valido = false;
+            }else{
+                $campo.parent().removeClass('input-error');
+            }
+
+        }else{
+
+            if(valor === ''){
+                $campo.addClass('input-error');
+                valido = false;
+            }else{
+                $campo.removeClass('input-error');
+            }
+
+        }
+
+    });
+
+    // Correo
+    if(!validarCorreo($('input[name="sendArr[parent_email]"]').val())){
+        valido = false;
+    }
+
+    return valido;
+}
+</script>

@@ -1,0 +1,279 @@
+<div class="hidden">{$payment_id}</div>
+<div class="col">
+	<div class="innerContent">
+		<div class="cardContainer fullWidth mb1">
+			<div class="row">
+				<div class="col">
+					<a href="{$returnLink}" class="btn navegacion"><i class="fa-solid fa-chevron-left"></i> Regresar</a>
+				</div>
+			</div>
+		</div>
+		<div class="row dobleContainer">
+			<div class="col col-5 mr1">
+				<form id="dataForm" method="post">
+					<div class="cardContainer fullWidth mb1 formDesign">
+						<fieldset><legend>Pago</legend>
+							<div class="row gap">
+								<div class="col col-3 aright"><label>Viajero:</label></div>
+								<div class="col strong">{$name}</div>
+							</div>
+							<div class="row gap">
+								<div class="col col-3 aright"><label>Estatus:</label></div>
+								<div class="col"><span class="texto-{$payment_status_color}">{$payment_status}</span></div>
+							</div>
+							<div>{$nota_rechazado}</div>
+							<div class="row gap">
+								<div class="col col-3 aright"><label>Fecha de creación:</label></div>
+								<div class="col">{$created_at}</div>
+							</div>
+							<div class="row gap">
+								<div class="col col-3 aright"><label>Fecha de validación de pago:</label></div>
+								<div class="col">
+									<input id="fechaValidacion" value="{$fechaUltimoRate}" /><br />
+									<div class="tipoCambio"></div>
+									<input type="text" class="hidden" id="exchange_rate" name="exchange_rate" disabled="disabled" value="{$exchange_rate}" />
+								</div>
+							</div>
+							<div class="row gap">
+								
+								<div class="col">
+									<table>
+										<tr>
+											<td width="33%"><label>Costo total del viaje:</label></td>
+											<td width="9%" class="aleft">{$simboloMoneda} &nbsp;</td>
+											<td width="49%" class="aright" id="cost">{$cost}</td>
+											<td width="9%" class="aright nowrap">&nbsp; {$moneda}</td>
+										</tr>
+										<tr>
+											<td width="33%"><label>Pagado (validado):</label></td>
+											<td width="9%" class="aleft">{$simboloMoneda} &nbsp;</td>
+											<td width="49%" class="aright" id="totalPagado">{$totalPagado}</td>
+											<td width="9%" class="aright nowrap">&nbsp; {$moneda}</td>
+										</tr>
+										<tr>
+											<td width="33%"><label>Monto reconocido ({$moneda}):</label></td>
+											<td width="9%" class="aleft">{$simboloMoneda} &nbsp;</td>
+											<td width="49%" class="aright" id="montoReconocidoConvertido">0</td>
+											<td width="9%" class="aright nowrap">&nbsp; {$moneda}</td>
+										</tr>
+										<tr>
+											<td width="33%"><label>Monto reconocido (MXN):</label></td>
+											<td width="9%" class="aleft">$ &nbsp;</td>
+											<td width="49%" class="aright"><input type="text" id="montoReconocido" value="{$amount_mxn}" class="aright" /></td>
+											<td width="9%" class="aright nowrap">&nbsp; MXN</td>
+										</tr>
+										<tr>
+											<td colspan="4" id="errores"></td>
+										</tr>
+										<tr>
+											<td width="33%"><label>Restante:</label></td>
+											<td width="9%" class="aleft">{$simboloMoneda} &nbsp;</td>
+											<td width="49%" class="aright" id="restante">0</td>
+											<td width="9%" class="aright nowrap">&nbsp; {$moneda}</td>
+										</tr>
+									</table>
+									
+								</div>
+							</div>
+							<div class="row gap">
+								<div class="col col-3 aright"><label>Tipo:</label></div>
+								<div class="col">{$tipoPago}</div>
+							</div>
+							<div class="row gap">
+								<div class="col col-3 aright"><label>Observaciones:</label></div>
+								<div class="col"><textarea name="comments" id="comments">{$comments}</textarea></div>
+							</div>
+							<div class="row gap">
+								<div class="col col-3 aright"></div>
+								<div class="col">
+									<div id="response" class="mb1"></div>
+									<div><a id="btnValidar" class="btn validar">Validar</a> <a id="btnRechazar" class="btn rechazar">Rechazar</a></div>	
+								</div>
+							</div>
+						</fieldset>
+					</div><!--//.cardContainer-->
+				</form>
+			</div>
+			<div class="col">
+				<div class="cardContainer fullWidth mb2">
+					<div class="row">
+						<div class="col acenter p1">
+							{$visorDocumento}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+const ratesJSON = {$ratesJSON};
+const fechasDisponibles = {$fechasDisponibles};
+const currency = {$currency};
+const simboloMoneda = '{$simboloMoneda}';
+const moneda = '{$moneda}';
+const cost = '{$cost}';
+const totalPagado = '{$totalPagado}';
+const currentPaymentSaldoAFavor = '{$currentPaymentSaldoAFavor}';
+var montoReconocidoConvertido = 0;
+
+flatpickr("#fechaValidacion", {
+    locale: "es",
+    dateFormat: "Y-m-d",
+
+    // Sólo estas fechas estarán habilitadas
+    enable: fechasDisponibles
+});
+$(document).ready(function(){
+	obtenerTipoCambio();
+	$('#totalPagado').html(formatearCantidad(totalPagado));
+	calcularPago(currentPaymentSaldoAFavor);
+
+	$('#montoReconocido').each(function () {
+	    // Permitir sólo dígitos y un punto
+	    this.value = this.value
+	        .replace(/[^0-9.]/g, '')
+	        .replace(/(\..*)\./g, '$1');
+
+	    let valor = parseFloat(this.value.replace(',', '.'));
+		if (isNaN(valor)) {
+		    valor = 0;
+		}
+		this.value = valor.toFixed(2);
+    });
+	$('#montoReconocido').on('input', function () {
+		$('.responseAlerts').html('');
+	    // Permitir sólo dígitos y un punto
+	    this.value = this.value
+	        .replace(/[^0-9.]/g, '')
+	        .replace(/(\..*)\./g, '$1');
+
+	       	calcularPago();
+	});
+	$('#montoReconocido').on('blur', function () {
+	    let valor = parseFloat(this.value.replace(',', '.'));
+		if (isNaN(valor)) {
+		    valor = 0;
+		}
+		this.value = valor.toFixed(2);
+	});
+
+	$('#fechaValidacion').on('input change', function(e){
+		obtenerTipoCambio();
+	});
+	$('#btnValidar').on('click', function(e){
+		e.preventDefault();
+		console.log('click Validar');
+	    if($('#errores').html() == ''){
+	    	cambiarEstatus('{$PAYMENT_VALIDATED_STATUS}');
+	    }else{
+	    	alert('Corrija los errores para poder guardar el estatus');
+	    }
+	});
+	$('#btnRechazar').on('click', function(e){
+		e.preventDefault();
+		console.log('click Rechazar');
+	    if($('#errores').html() == ''){
+		    cambiarEstatus('{$PAYMENT_REJECTED_STATUS}');
+		}else{
+			alert('Corrija los errores para poder guardar el estatus');
+		}
+	});
+});
+function cambiarEstatus(nuevoEstatus){
+	msgBox = $('#response');
+	var envioData = new FormData();
+	envioData.append("action",'updatePayment');													
+	envioData.append("payment_id",'{$payment_id}');
+	envioData.append("amount_original",montoReconocidoConvertido);
+	envioData.append("currency_original",{$currency_original});
+	envioData.append("exchange_rate",$('#exchange_rate').val());
+	envioData.append("amount_mxn",$('#montoReconocido').val());
+	envioData.append("payment_type",'{$payment_type}');
+	envioData.append("payment_status",nuevoEstatus);
+	envioData.append("stripe_payment_intent_id",'');
+	envioData.append("document_id",'{$document_id}');
+	envioData.append("comments",$('#comments').val());
+	envioData.append("paid_at",$('#fechaValidacion').val());
+	envioData.append("language",'{$language}');
+	$.ajax({
+		url: "{$siteURL}"+"webservice/acciones.php",
+		type:"POST",
+		processData: false,//tanto processData como contentType deben estar en false para que funcione FormData
+		contentType: false,
+		data:envioData,
+		cache:false,
+		dataType:"json",
+		success: function(respuesta){
+			var texto = '';
+			if(respuesta.success){
+				texto = '<span class="alerta verde">Se guardó el dato</span>';
+
+			}else{
+				texto = "<div class='alerta bg-warning'>"+respuesta.error+"</div>";
+				if(respuesta.data.httpCode == 401 || respuesta.data.httpCode == 403){
+					document.location.href='{$siteURL}SALIR';
+				}
+			}
+			$(msgBox).html(texto);
+			$(".alerta").delay(3000).fadeOut();
+			if(respuesta.success){
+				document.location.reload();
+			}
+		}
+	});
+}
+function obtenerTipoCambio(){
+	var valor = $('#fechaValidacion').val();
+	var tipoCambio = ratesJSON[valor].{$currencyID};
+	
+	var formateado = formatearCantidad(tipoCambio);
+	var plantilla = '<div class="tipoCambio trip-chip mt1">' + simboloMoneda + '1 ' + moneda + ' = ' + formateado + ' MXN</div>';
+	$('.tipoCambio').html(plantilla);
+	$('#exchange_rate').val(formateado);
+	calcularPago();
+}
+function calcularPago(){
+	var montoReconocido = $('#montoReconocido').val();
+	var currentRate = $('#exchange_rate').val();
+	console.log('montoReconocido:'+montoReconocido);
+	console.log('currentRate:'+currentRate);
+	montoReconocidoConvertido = montoReconocido / currentRate;
+	console.log('montoReconocidoConvertido:'+montoReconocidoConvertido);
+	$('#montoReconocidoConvertido').html(formatearCantidad(montoReconocidoConvertido));
+
+	//PAGADO
+	var nuevoTotalPagado = (totalPagado - currentPaymentSaldoAFavor) + montoReconocidoConvertido;
+	console.log('nuevoTotalPagado = ('+totalPagado+' - '+currentPaymentSaldoAFavor+') + '+montoReconocidoConvertido);
+	console.log('nuevoTotalPagado:'+nuevoTotalPagado);
+	$('#totalPagado').html(formatearCantidad(nuevoTotalPagado));
+
+	//RESTANTE
+	var restante = cost - nuevoTotalPagado ;
+	console.log('restante = '+cost+' - '+nuevoTotalPagado);
+	console.log('restante:'+restante);
+	$('#restante').html(formatearCantidad(restante));
+
+	var errores = '';
+
+	if(restante < 0){
+		errores += '<div class="alerta roja">El restante no puede ser negativo.</div>';
+	}
+
+	$('#errores').html(errores);
+}
+function floorNum(numero){
+	const floorToTwo = (num) => Math.floor(numero * 100) / 100;
+	return floorToTwo;
+}
+function formatearCantidad(cantidad){
+	var formateador = new Intl.NumberFormat('es-MX', {
+	  style: 'decimal',
+	  useGrouping: false,
+	  minimumFractionDigits: 2,
+	  maximumFractionDigits: 2
+	});
+	var formateado = formateador.format(cantidad);
+	return formateado;
+}
+</script>

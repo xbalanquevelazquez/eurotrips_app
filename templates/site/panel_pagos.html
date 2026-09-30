@@ -1,0 +1,135 @@
+{$mensaje}
+<div class="col">
+	<div class="innerContent">
+		<div class="cardContainer fullWidth mb1">
+			<div class="row">
+				<div class="col">
+					<a href="{$returnLink}" class="btn navegacion"><i class="fa-solid fa-chevron-left"></i> Regresar</a>
+				</div>
+			</div>
+		</div>
+		{$plantillaPagos}
+	</div>
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+	console.log('Init...');
+	$('#montoPagoEnLinea').each(function () {
+	    // Permitir sólo dígitos y un punto
+	    this.value = this.value
+	        .replace(/[^0-9.]/g, '')
+	        .replace(/(\..*)\./g, '$1');
+
+	    let valor = parseFloat(this.value.replace(',', '.'));
+		if (isNaN(valor)) {
+		    valor = 0;
+		}
+		this.value = valor.toFixed(2);
+    });
+	$('#montoPagoEnLinea').on('input', function () {
+		$('.responseAlerts').html('');
+	    // Permitir sólo dígitos y un punto
+	    this.value = this.value
+	        .replace(/[^0-9.]/g, '')
+	        .replace(/(\..*)\./g, '$1');
+
+        var resultado = calcularPago($('#montoPagoEnLinea').val());
+
+        if(resultado !== ''){
+        	$('.responseAlerts').html('<div class="pm5 mb1 alerta roja small">'+resultado+'</div>');
+        }
+	});
+
+	$('#montoPagoEnLinea').on('blur', function () {
+	    let valor = parseFloat(this.value.replace(',', '.'));
+		if (isNaN(valor)) {
+		    valor = 0;
+		}
+		this.value = valor.toFixed(2);
+	});
+
+	$('#pagoStripe').on('click', function(e){
+		e.preventDefault();
+		console.log('click Send to Stripe');
+		var resultado = calcularPago($('#montoPagoEnLinea').val());
+
+        if(resultado !== ''){
+        	$('.responseAlerts').html('<div class="pm5 mb1 alerta roja small">'+resultado+'</div>');
+        }else{
+        	$('#pagoStripeForm').submit();
+        }
+
+	});
+
+	$('.btnUpload').on('click', function(){
+	    let input = $(this).data('input');
+	    console.log(input);
+	    $('#' + input).click();
+	});
+	$('#sendForm').on('click', function(e){
+		e.preventDefault();
+		console.log('click Send');
+	    if($('.document-upload')[0].files.length == 0){ alert('{$alertFaltaArchivo}'); return; };
+	    $('#dataForm').submit();
+	});
+	$('.document-upload').on('change', function(){
+	    if(this.files.length == 0) return;
+	    let archivo = this.files[0];
+	    let id = this.id;
+		let permitidos = ['pdf','jpg','jpeg','png'];
+		let extension = archivo.name.split('.').pop().toLowerCase();
+
+	    if(!permitidos.includes(extension)){
+		    alert('{$alertFormatoNoPermitido}');
+		    $(this).val('');
+		    return;
+		}
+
+		if(archivo.size > 2 * 1024 * 1024){
+		    alert('{$alertExcedeTamanio}');
+		    $(this).val('');
+		    return;
+		}
+		console.log(id);
+	    $('#' + id + '_name').html(
+	    	'<span class="chip bg-verdeagua mt1">'+
+	        archivo.name +
+	        ' <a href="#" class="removeFile" data-input="' + id + '">✕</a>'+
+	        '</span>'
+	    );
+
+	});
+	$(document).on('click','.removeFile',function(e){
+	    e.preventDefault();
+	    let input = $(this).data('input');
+	    $('#' + input).val('');
+	    $('#' + input + '_name').empty();
+	});
+
+});
+function calcularResto(total,totalParcialidades,monto){
+	console.log('total:'+total);
+	console.log('totalParcialidades:'+totalParcialidades);
+	console.log('monto:'+monto);
+	console.log('monto:'+((total - totalParcialidades) - monto));
+
+	return restante = ((total - totalParcialidades) - monto).toFixed(2);
+}
+function calcularPago(monto){
+	var errores = '';
+	console.log('restante:'+restante);
+	console.log('pagoMinimo:'+pagoMinimo);
+	console.log('monto:'+monto);
+	if(monto > restante){
+		errores = '{$montoMayor} <span class="nowrap">('+ simboloMoneda + ' ' + restante + ' ' + moneda +')</span>';
+	}
+	if(monto < pagoMinimo){
+		errores = '{$montoMenor} <span class="nowrap">('+ simboloMoneda + ' ' + pagoMinimo + ' ' + moneda +')</span>';
+	}
+	if(monto <= 0){
+		errores = '{$montoCero}.';
+	}
+	return errores;
+}
+
+</script>

@@ -1,0 +1,13 @@
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^([a-zA-Z0-9-_]+)([/]*)$ index.php?data1=$1 [L,NC]
+RewriteRule ^([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)([/]*)$ index.php?data1=$1&data2=$2 [L,NC]
+RewriteRule ^([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)([/]*)$ index.php?data1=$1&data2=$2&data3=$3 [L,NC]
+RewriteRule ^([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)([/]*)$ index.php?data1=$1&data2=$2&data3=$3&data4=$4 [L,NC]
+RewriteRule ^([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)([/]*)$ index.php?data1=$1&data2=$2&data3=$3&data4=$4&data5=$5 [L,NC]
+RewriteRule ^([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)/([a-zA-Z0-9-_]+)([/]*)$ index.php?data1=$1&data2=$2&data3=$3&data4=$4&data5=$5&data6=$6 [L,NC]
+#################
+#todo en el mismo contexto/a partir de ese directorio
+#rewriterule find(all) replace [noReconocerMayusculas Ultima Regla]
+#REDIRECCION RewriteRule ^(.*)$ https://domain.com/folder/ [NC,R=302,L]
+</IfModule>

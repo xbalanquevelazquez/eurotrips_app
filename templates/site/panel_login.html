@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" type="image/x-icon" href="img/admin-eurotrips.ico">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="{$siteURL}css/basico.css">
+	<link rel="stylesheet" href="{$siteURL}css/eurotrips_login.css">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/jquery-4.0.0.min.js" integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao=" crossorigin="anonymous"></script>
+	<script src="https://kit.fontawesome.com/609e2e7fda.js" crossorigin="anonymous"></script>
+	<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+	<title>Eurotrips | Panel del viajero</title>
+</head>
+<body>
+	<div id="mainContainer" class="container redondear flex row">
+		<div class="col portada"></div>
+		<div class="col">
+			<div class="formContainer">
+				<div class="logo mb2 mt2">
+					<img src="{$siteURL}img/logo-eurotrips-negro.png" alt="Eurotrips" />
+				</div>
+				<div class="titulo">
+					Bienvenido
+				</div>
+				<div class="form">
+					<form class="login-form" method="post">
+						<div class="cf-turnstile"
+						     data-sitekey="{$TURNSTILE_SITE_KEY}">
+						</div>
+						<div class="row">
+							<div class="col">
+								<label for="usr">Correo electrónico</label><br />
+								<input type="text" class="form-control" id="cmp[usrlogin]" name="cmp[usrlogin]" placeholder="Escribe tu usuario">
+							</div>
+						</div>
+						<div class="row">
+							<div class="col">
+								<label for="psw">Contraseña</label><br />
+								<input type="password" class="form-control" id="cmp[pswlogin]" name="cmp[pswlogin]" placeholder="Escribe tu contraseña">
+							</div>
+						</div>
+						<div class="row">
+							<div class="col">
+								{$errorMsg}
+							</div>
+						</div>
+						<div class="row">
+							<div class="col aright"><button type="submit" class="btn primario">Ingresar</button></div>
+						</div>
+					</form>
+				</div>
+				<div class="row mb2">
+					<div class="col col-12 col-md-6"><a href="{$siteURL}REGISTRO/ES" class="btn navegacion">Registrarse</a></div>
+					<div class="col col-12 col-md-6 aright"><a href="{$siteURL}RECUPERACION" class="btn navegacion">Olvidé mi contraseña</a></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

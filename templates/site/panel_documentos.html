@@ -1,0 +1,111 @@
+<div class="col">
+	<div class="innerContent">
+		<div class="cardContainer fullWidth mb1">
+			<div class="row">
+				<div class="col">
+					<a href="{$siteURL}" class="btn navegacion"><i class="fa-solid fa-chevron-left"></i> Regresar</a>
+				</div>
+			</div>
+		</div>
+		<div class="cardContainer fullWidth mb1 formDesign">
+				<form id="dataForm" method="post" enctype="multipart/form-data" action="">
+					<div class="row contenedorDocumentos detalles">
+						<div class="col">
+							
+							<div class="item pm5 ps1">
+								<div class="row fullWidth">
+									<div class="mensajePassport">{$mensajePassport}</div>
+									<div class="fixed"></div>
+									<div class="col col-12 col-md-4"><i class="{$passportCSS}"></i> Pasaporte 1</div>
+									<div class="col col-12 col-md-4"><span class="capsula hueca {$btnPassportColor}">{$passportStatus}</span></div>
+									<div class="col col-12 col-md-4 acenter">
+										{$input}
+										
+										{$btnDoc}
+										
+										<br />
+										<span id="passport_name" class="fileName"></span>
+									</div>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+					<div class="row contenedorDocumentos detalles">
+						<div class="col">
+							
+							<div class="item pm5 ps1">
+								<div class="row fullWidth">
+									<div class="mensajePassport2">{$mensajePassport2}</div>
+									<div class="fixed"></div>
+									<div class="col col-12 col-md-4"><i class="{$passport2CSS}"></i> Pasaporte 2</div>
+									<div class="col col-12 col-md-4"><span class="capsula hueca {$btnPassport2Color}">{$passport2Status}</span></div>
+									<div class="col col-12 col-md-4 acenter">
+										{$input2}
+										
+										{$btnDoc2}
+										
+										<br />
+										<span id="passport2_name" class="fileName"></span>
+									</div>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col aright">{$btnEnviar}</div>
+					</div>
+				</form>
+		</div><!--//.cardContainer-->
+	</div>
+</div>
+<script type="text/javascript">	
+$('.btnUpload,.btnUpload2').on('click', function(){
+    let input = $(this).data('input');
+    console.log(input);
+    $('#' + input).click();
+});
+$('#sendForm').on('click', function(e){
+	e.preventDefault();
+	console.log('click Send');
+	if($('.document-upload').length){//si existe este control
+    	if($('.document-upload')[0].files.length == 0){ alert('{$alertFaltaPasaporte}'); return; };
+	}
+    $('#dataForm').submit();
+});
+$('.document-upload,.document-upload2').on('change', function(){
+    if(this.files.length == 0) return;
+    let archivo = this.files[0];
+    let id = this.id;
+	let permitidos = ['pdf','jpg','jpeg','png'];
+	let extension = archivo.name.split('.').pop().toLowerCase();
+
+
+    if(!permitidos.includes(extension)){
+	    alert('{$alertFormatoNoPermitido}');
+	    $(this).val('');
+	    return;
+	}
+
+	if(archivo.size > 2 * 1024 * 1024){
+	    alert('{$alertExcedeTamanio}');
+	    $(this).val('');
+	    return;
+	}
+	console.log(id);
+    $('#' + id + '_name').html(
+    	'<span class="chip mt1">'+
+        archivo.name +
+        ' <a href="#" class="removeFile" data-input="' + id + '">✕</a>'+
+        '</span>'
+    );
+});
+$(document).on('click','.removeFile',function(e){
+    e.preventDefault();
+    let input = $(this).data('input');
+    $('#' + input).val('');
+    $('#' + input + '_name').empty();
+});
+</script>

@@ -1,0 +1,66 @@
+<div class="cardContainer fullWidth mb1 formDesign p0">
+	<div class="primario p1">
+		<h3 class="texto-blanco">Viaje</h3>
+	</div>
+	<div class="p2">
+		<div class="row">
+			<div class="col">
+				<div class="row mb1">
+					<div class="col col-12 col-md-7">
+						Se han pagado <span class="strong texto-verde">{$totalPagadoLabel}</span> de un total de <span class="strong texto-color">{$cost}</span>
+					</div>
+				</div>
+				<div class="row mb2">
+					<div class="col col-12 col-md-6">
+						<div class="porcentaje mb1">
+							<div class="barra">
+								<div class="porcentajeAdeudo" style="width:{$porcentajeAdeudo}%;" title="Adeudo: {$porcentajeAdeudo}%" ></div>
+								<div class="porcentajePagado" style="width:{$porcentajePagado}%;" title="Pagado: {$porcentajePagado}%"></div>
+							</div>
+						</div>
+						<div class="aright nomenclatura">
+							<table class="aright tableNomenclatura">
+								<tr>
+									<td class="bg-aqua">&nbsp;</td>
+									<td class="small texto-grismedio">Pagado (validado):</td>
+									<td class="small">{$totalPagadoLabel}</td>
+								</tr>
+								<tr>
+									<td class="bg-marron">&nbsp;</td>
+									<td class="small texto-grismedio">Adeudo:</td>
+									<td class="small">{$totalAdeudoLabel}</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row contenedorDocumentos detalles">
+			<div class="col col-12 col-md-7">
+				<div class="row mb2">
+						{$sigFechaPago}
+				</div>
+				<div>
+					<h3>Historial de pagos</h3>
+				</div>
+				<div class="dataTableContainer">
+					{$tablaPagos}
+				</div>
+			</div>
+
+			<div class="col col-12 col-md-1">
+			</div>
+			{$moduloPagoHabilitado}
+			
+		</div>
+	</div>
+</div><!--//.cardContainer-->
+<script type="text/javascript">
+	const costoTotal = {$costoTotal};
+	var restante = {$restante};
+	var totalAdeudo = {$totalAdeudo};
+	var pagoMinimo = {$pagoMinimoRaw};//{$pagoMinimoRaw};
+	var simboloMoneda = '{$simboloMoneda}';
+	var moneda = '{$moneda}';
+</script>

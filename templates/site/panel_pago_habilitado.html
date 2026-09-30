@@ -1,0 +1,37 @@
+<div class="col col-12 col-md-4">
+	<!--div class="mb1 contornear p1">
+		{$pagoMinimo}
+		{$moduloPago}
+	</div-->
+	<!--div class="mb1">ó subir un comprobante:</div-->
+	<div class="mb1">Subir un comprobante:</div>
+	
+	<div class="contornear bg-azulmuyclaro p1">
+		<form id="dataForm" method="post" enctype="multipart/form-data" action="">
+			<div class="row mb1">
+				<div class="col col-12">
+					<div class="dblock mbm5"><label for="tipo">Tipo</label></div>
+					<select name="tipo" id="tipo">
+						<option value="cash">Depósito en efectivo</option>
+						<option value="transfer">Transferencia</option>
+					</select>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col col-12">
+					<div class="dblock mbm5">
+						<label for="">Cargar comprobante:</label>
+					</div>
+					<input type="file" id="pago" name="pago"  class="document-upload" accept=".pdf,.jpg,.jpeg,.png" style="display:none;">
+					<div class="mb1">
+						<a class="btn primario btnUpload" data-input="pago"><i class="fa-solid fa-upload"></i></a>
+						<br />
+						<span id="pago_name" class="fileName"></span>
+					</div>
+					<div><button type="submit" class="btn primario" id="sendForm"><i class="fa-solid fa-paper-plane"></i> &nbsp; <span>Enviar</span></button></div>
+				</div>
+			</div>
+		</form>
+	</div>
+	
+</div>

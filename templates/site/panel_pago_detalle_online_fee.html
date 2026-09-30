@@ -1,0 +1,50 @@
+<div class="col">
+	<div class="innerContent">
+		<div class="cardContainer fullWidth mb1">
+			<div class="row">
+				<div class="col">
+					<a href="{$returnLink}" class="btn navegacion"><i class="fa-solid fa-chevron-left"></i> Regresar</a>
+				</div>
+			</div>
+		</div>
+		<div class="row dobleContainer">
+			<div class="col col-5 mr1">
+				<div class="cardContainer fullWidth mb1 formDesign">
+					<fieldset><legend>Pago</legend>
+						<div class="row gap">
+							<div class="col col-3 aright"><label>Viajero:</label></div>
+							<div class="col strong">{$NOMBRE}</div>
+						</div>
+						<div class="row gap">
+							<div class="col col-3 aright"><label>Estatus:</label></div>
+							<div class="col"><span class="texto-{$payment_status_color}">{$payment_status}</span></div>
+						</div>
+						<div class="row gap">
+							<div class="col col-3 aright"><label>Fecha de creación:</label></div>
+							<div class="col">{$created_at}</div>
+						</div>
+						<div class="row gap">
+							<div class="col col-3 aright"><label>Fecha de validación de pago:</label></div>
+							<div class="col">
+								{$paid_at}
+							</div>
+						</div>
+						<div class="row gap">
+							<div class="col col-3 aright"><label>Monto:</label></div>
+							<div class="col">{$amount_mxn}</div>
+						</div>
+						<div class="row gap">
+							<div class="col col-3 aright"><label>Tipo:</label></div>
+							<div class="col">{$payment_type}</div>
+						</div>
+						<div class="row gap">
+							<div class="col col-3 aright"><label>Observaciones:</label></div>
+							<div class="col">{$comments}</div>
+						</div>
+					</fieldset>
+				</div><!--//.cardContainer-->
+			</div>
+
+		</div><!--//.cardContainer-->
+	</div>
+</div>

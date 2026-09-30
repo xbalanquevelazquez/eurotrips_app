@@ -1,0 +1,283 @@
+{$mensaje}
+<div class="col">
+	<div class="innerContent">
+		<div class="cardContainer fullWidth mb1">
+			<div class="row">
+				<div class="col">
+					<a href="{$returnLink}" class="btn navegacion"><i class="fa-solid fa-chevron-left"></i> Regresar</a>
+				</div>
+			</div>
+		</div>
+		<div class="cardContainer fullWidth mb1 formDesign">
+			<form class="user-form" method="post">
+				<fieldset><legend>Usuario</legend>
+					<div class="row gap">
+						<div class="col col-3 aright"><label>Usuario (email)<span class="obligatorio">*</span>:</label></div>
+						<div class="col">
+							<div id="msgCorreo" class=""></div>
+							<input class="requerido" type="text" id="sendArr[email]" name="sendArr[email]" value="{$email}">
+						</div>
+					</div>
+					<div class="row gap">
+						<div class="col col-3 aright"><label>Nombre<span class="obligatorio">*</span>:</label></div>
+						<div class="col">
+							<input class="requerido" type="text" id="sendArr[name]" name="sendArr[name]" value="{$name}">
+						</div>
+					</div>
+					<div class="row gap">
+						<div class="col col-3 aright"><label>Contraseña<span class="obligatorio">*</span>:</label></div>
+						<div class="col">
+							<input class="requerido" type="password" id="sendArr[password]" name="sendArr[password]" value="" autocomplete="new-password">
+							<br />
+							<br />
+							<div class="listado small">
+								<div class="msgPlus"></div>
+								<div class="reglaLongitud texto-alerta">
+									<span class="icono"><i class="fa fa-times"></i></span>
+									<span class="texto">Mínimo 8 caracteres</span>
+								</div>
+								<div class="reglaMinuscula texto-alerta">
+									<span class="icono"><i class="fa fa-times"></i></span>
+									<span class="texto">Una letra minúscula</span>
+								</div>
+								<div class="reglaMayuscula texto-alerta">
+									<span class="icono"><i class="fa fa-times"></i></span>
+									<span class="texto">Una letra mayúscula</span>
+								</div>
+								<div class="reglaNumero texto-alerta">
+									<span class="icono"><i class="fa fa-times"></i></span>
+									<span class="texto">Un número</span>
+								</div>
+								<div class="reglasimbolo texto-alerta">
+									<span class="icono"><i class="fa fa-times"></i></span>
+									<span class="texto">Un símbolo</span>
+								</div>
+							</div>	
+						</div>
+					</div>
+					<div class="row gap">
+						<div class="col col-3 aright"><label>Confirmar contraseña<span class="obligatorio">*</span>:</label></div>
+						<div class="col">
+							<input class="requerido" type="password" value="" id="sendArr[confirmPassword]" name="sendArr[confirmPassword]" autocomplete="new-password" />
+							<div id="msgConfirmacion" class="small mt-1 "></div>
+						</div>
+					</div>
+					<div class="row gap">
+						<div class="col col-3 aright"><label>Perfil<span class="obligatorio">*</span>:</label></div>
+						<div class="col">
+							<select name="sendArr[role]" id="sendArr[role]">
+								<option value="admin" {$optionAdmin}>Administrador</option>
+								<option value="concierge" {$optionConcierge}>Sólo consulta</option>
+								<option value="editor" {$optionEditor}>Editor</option>
+							</select>
+						</div>
+					</div>
+					<!--div class="row gap">
+						<div class="col col-3 aright"><label>Activo:</label></div>
+						<div class="col">
+							<input type="checkbox" id="sendArr[activo]" name="sendArr[activo]" value="1" {$checkActivo} />
+						</div>
+					</div-->
+					<div class="row">
+						<div class="col"><button type="submit" class="btn primario" id="sendForm"><i class="fa-solid fa-floppy-disk"></i> &nbsp; Guardar</button></div>
+					</div>
+				</fieldset>
+			</form>
+		</div><!--//.cardContainer-->
+	</div>
+</div>
+<script type="text/javascript">
+const clasesContenedores = {
+	longitud:'.reglaLongitud',
+	minuscula:'.reglaMinuscula',
+	mayuscula:'.reglaMayuscula',
+	numero:'.reglaNumero',
+	simbolo:'.reglasimbolo',
+	espacios:'.msgPlus'
+}
+$(document).ready(function(){
+	console.log('usuario listo');
+	$('input[name="sendArr[password]"]').on('keyup', function(){
+	    validarPassword($(this).val());
+	});
+	//----------------------------
+	$('input[name="sendArr[password]"], input[name="sendArr[confirmPassword]"]').on('keyup', function () {
+		$(this).removeClass('input-error');
+	    if ($('input[name="sendArr[confirmPassword]"]').val().trim().length === 0) {
+	        $('#msgConfirmacion')
+	            .html('')
+	            .removeClass('text-success text-danger');
+	        return;
+	    }
+	    if (validarConfirmacionPassword()) {
+	        $('#msgConfirmacion')
+	            .html('<i class="fa fa-check"></i> Las contraseñas coinciden')
+	            .removeClass('text-danger')
+	            .addClass('text-success');
+	    } else {
+	        $('#msgConfirmacion')
+	            .html('<i class="fa fa-times"></i> Las contraseñas no coinciden')
+	            .removeClass('text-success')
+	            .addClass('text-danger');
+	    }
+
+	});
+	
+	//****************************
+	$('input[name="sendArr[email]"]').on('keyup', function(){
+		if (validarCorreo($(this).val())) {
+		    $('#msgCorreo').html('Correo válido').removeClass('texto-alerta').addClass('texto-activo');
+		} else {
+		    $('#msgCorreo').html('Correo inválido').addClass('texto-alerta').removeClass('texto-activo');
+
+		}
+	});
+
+	//****************************
+	$('#sendForm').on('click', function(e){
+	    if(!validarFormulario()){
+	    	e.preventDefault();
+	        alert('Hay campos obligatorios sin completar.');
+	        return;
+	    }
+	    // Enviar formulario
+	});
+	//****************************
+	$('.requerido').on('input change', function(e){
+		let $campo = $(this);
+	    if($campo.is(':checkbox')){
+	        if($campo.is(':checked')){
+	            $campo.parent().removeClass('input-error');
+	        }
+	    }else{
+	        if(($campo.val() ?? '').trim() !== ''){
+	            $campo.removeClass('input-error');
+	        }
+	    }
+	});
+
+});
+
+function validarPassword(password){
+    let resultado = {
+        longitud: password.length >= 8,
+        minuscula: /[a-z]/.test(password),
+        mayuscula: /[A-Z]/.test(password),
+        numero: /\d/.test(password),
+        simbolo: /[^A-Za-z0-9]/.test(password),
+        espacios: !/\s/.test(password)
+    };
+
+	var cantidadValidaciones = 0;
+	var validacionesCorrectas = 0;
+
+    for(regla in resultado){
+    	cantidadValidaciones++;
+    	//console.log(regla+' : '+resultado[regla]);
+    	if(resultado[regla]){
+    		validacionesCorrectas++;
+    		console.log(clasesContenedores[regla]);
+    		if(regla !== 'espacios'){
+    			$(clasesContenedores[regla]).addClass('texto-activo');
+    			$(clasesContenedores[regla]).removeClass('texto-alerta');
+    			$(clasesContenedores[regla]+' icono i.fa').addClass('fa-check');
+    			$(clasesContenedores[regla]+' icono i.fa').removeClass('fa-times');
+    		}else{
+    			$(clasesContenedores[regla]).addClass('texto-activo');
+    			$(clasesContenedores[regla]).removeClass('texto-alerta');
+    			$(clasesContenedores[regla]).text('');
+    		}
+    	}else{
+    		if(regla !== 'espacios'){
+    			$(clasesContenedores[regla]).removeClass('texto-activo');
+    			$(clasesContenedores[regla]).addClass('texto-alerta');
+    			$(clasesContenedores[regla]+' icono i.fa').removeClass('fa-check');
+    			$(clasesContenedores[regla]+' icono i.fa').addClass('fa-times');
+    		}else{
+    			$(clasesContenedores[regla]).removeClass('texto-activo');
+    			$(clasesContenedores[regla]).addClass('texto-alerta');
+    			$(clasesContenedores[regla]).text('No debe contener espacios');
+    		}
+    	}
+    }
+
+    if(cantidadValidaciones == validacionesCorrectas){
+    	return true;
+    }else{
+    	return false;
+    }
+}
+function validarConfirmacionPassword(){
+    let password = $('input[name="sendArr[password]"]').val();
+    let confirmacion = $('input[name="sendArr[confirmPassword]"]').val();
+
+    if (confirmacion.length === 0) {
+        return false;
+    }
+
+    return password === confirmacion;
+}
+function validarCorreo(correo){
+    correo = (correo ?? '').trim();
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(correo);
+}
+
+function validarFormulario(){
+
+    let valido = true;
+
+    $('.requerido').each(function(){
+
+        let $campo = $(this);
+        let valor = ($campo.val() ?? '').trim();
+
+        if($campo.is(':checkbox')){
+
+            if(!$campo.is(':checked')){
+                $campo.parent().addClass('input-error');
+                valido = false;
+            }else{
+                $campo.parent().removeClass('input-error');
+            }
+
+        }else{
+
+            if(valor === ''){
+                $campo.addClass('input-error');
+                valido = false;
+            }else{
+                $campo.removeClass('input-error');
+            }
+
+        }
+
+    });
+
+    // Correo
+    if(!validarCorreo($('input[name="sendArr[email]"]').val())){
+        valido = false;
+    }
+
+    if($('input[name="sendArr[password]"]').val().trim().length > 0){
+	    // Contraseña
+	    if(!validarPassword($('input[name="sendArr[password]"]').val())){
+	    	$('input[name="sendArr[password]"]').addClass('input-error');
+	    	alert('La contraseña no cumple con las características solicitadas.');
+	        valido = false;
+	    }
+
+	    // Confirmación
+	    if(!validarConfirmacionPassword()){
+	    	$('input[name="sendArr[confirmPassword]"]').addClass('input-error');
+	    	$('#msgConfirmacion')
+	            .html('<i class="fa fa-times"></i> Las contraseñas no coinciden')
+	            .removeClass('text-success')
+	            .addClass('text-danger');
+	        valido = false;
+	    }
+
+    }
+
+    return valido;
+}
+</script>

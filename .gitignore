@@ -1,0 +1,27 @@
+# Logs
+logs/
+*.log
+
+# Backups
+_cnf_backup/
+*.bak
+*.sql
+*.zip
+
+# Configuración sensible (credenciales, API keys)
+cnf/
+Web-COPY.config
+
+# Archivos temporales de Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+~$*
+
+# Archivos de VS Code / editores
+.vscode/
+.idea/
+
+# Dependencias (si usas Composer)
+/vendor/
+composer.lock

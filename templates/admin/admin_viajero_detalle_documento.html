@@ -1,0 +1,75 @@
+<div class="col">
+	<div class="innerContent">
+		<div class="cardContainer fullWidth mb1">
+			<div class="row">
+				<div class="col">
+					<a href="{$returnLink}" class="btn navegacion"><i class="fa-solid fa-chevron-left"></i> Regresar</a>
+				</div>
+			</div>
+		</div>
+		<div class="row dobleContainer">
+			<div class="col col-5 mr1">
+				<div class="cardContainer fullWidth mb1 formDesign">
+					<fieldset><legend>Viajero</legend>
+						<div class="row gap">
+							<div class="col col-4"></div>
+							<div class="col"><span class="capsula hueca {$btnPassportColor}"><i class="{$passportCSS}"></i> {$passportStatus}</span></div>
+						</div>
+						<div class="row gap">
+							<div class="col col-4 aright"><label>Nombre:</label></div>
+							<div class="col strong">{$traveler_name}</div>
+						</div>
+						<div class="row gap">
+							<div class="col col-4 aright"><label>Correo electrónico:</label></div>
+							<div class="col">{$traveler_email}</div>
+						</div>
+						<div class="row gap">
+							<div class="col col-4 aright"><label>Grupo/Viaje:</label></div>
+							<div class="col">{$trip_name}</div>
+						</div>
+						<div class="row gap">
+							<div class="col col-4 aright"><label>Fecha de nacimiento:</label></div>
+							<div class="col">{$traveler_birthdate}</div>
+						</div>
+						<div class="row gap">
+							<div class="col col-4 aright"><label>Edad al momento de viajar:</label></div>
+							<div class="col">{$traveler_age} años</div>
+						</div>
+						<div class="row gap">
+							<div class="col col-4 aright"><label>Número de pasaporte con el que viaja:</label></div>
+							<div class="col">{$traveler_passport_number}</div>
+						</div>
+					</fieldset>
+				</div><!--//.cardContainer-->
+			</div>
+			<div class="col">
+				<div class="cardContainer fullWidth mb2">
+					<div class="row">
+						<div class="col"><h3>Documento: <span class="strong">{$tipo_documento}</span></h3></div>
+					</div>
+					<div class="row {$consultorHidden}">
+						<div class="col acenter">
+							<label for="notes">Observaciones: </label>
+							<textarea name="notes" id="notes" {$observacionesState}>{$observaciones}</textarea>
+						</div>
+					</div>
+					<div class="row{$btnsAcciones} {$consultorHidden}">
+						<div class="col acenter">
+							<a class="btn validar" id="btnValidar">Validar</a> <a class="btn rechazar" id="btnRechazar">Rechazar</a>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col acenter p1">
+							{$visorDocumento}
+						</div>
+					</div>
+					<div class="row">
+						<div class="col acenter">
+							<div class="msgBox"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

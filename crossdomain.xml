@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<cross-domain-policy>
+  <allow-access-from domain="*.irrepetible.mx" />
+  <allow-access-from domain="*.eurotrips.com.mx" />
+  <allow-access-from domain="*.stripe.com" />
+  <allow-access-from domain="*.gstatic.com" />
+</cross-domain-policy>
