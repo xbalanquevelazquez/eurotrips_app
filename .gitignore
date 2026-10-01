@@ -9,7 +9,8 @@ _cnf_backup/
 *.zip
 
 # Configuración sensible (credenciales, API keys)
-cnf/
+cnf/credentials.php
+cnf/mail365_token.json
 Web-COPY.config
 
 # Archivos temporales de Windows
