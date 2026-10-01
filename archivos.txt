@@ -1,0 +1,5 @@
+.gitignore
+cnf/cnfg.app.php
+cnf/languages.php
+cnf/secciones.ADM.php
+cnf/secciones.php

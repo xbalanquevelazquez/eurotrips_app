@@ -25,3 +25,7 @@ Desktop.ini
 # Dependencias (si usas Composer)
 /vendor/
 composer.lock
+
+# Configuraciones y automatizaciones locales
+_automatizar/
+_deploys/
