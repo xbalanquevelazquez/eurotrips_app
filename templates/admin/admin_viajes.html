@@ -44,19 +44,39 @@ $(document).ready(function(){
 	    }
 	    e.preventDefault();
 	    let termino = $(this).val().trim();
+	    // Limpiar solo la página de esta pantalla
+		sessionStorage.removeItem('pagina_{$data1}');
+		if(termino === ''){
+			sessionStorage.removeItem('busqueda_{$data1}');
+		}else{
+			sessionStorage.setItem('busqueda_{$data1}', termino);
+		}
+
 	    getRegistros(termino === '' ? '%' : termino);
 	});
 	$('#btnSearch').click(function(){
 		var currentValue = $('#terminoBusqueda').val().trim();
 		if(currentValue == ''){
-			getRegistros('%');
+			getRegistros();
 		}else{
 			getRegistros(currentValue);
 		}
 	});
-	getRegistros('%');
+	getRegistros();
 });
-function getRegistros(filter,page=1,type='{$data1}'){
+function getRegistros(filter=undefined,page=null,type='{$data1}'){
+	// Si no se especifica búsqueda, buscar en sessionStorage
+    if(filter === undefined){
+        filter = sessionStorage.getItem('busqueda_' + type) || '%';
+    }
+    // Si no se especifica página, buscar en sessionStorage
+    if(page === null){
+        page = sessionStorage.getItem('pagina_' + type) || 1;
+    }
+	console.log(sessionStorage);
+	// Actualizar el campo de búsqueda con el valor guardado
+    $('#terminoBusqueda').val(filter === '%' ? '' : filter);
+
 	$(".resultBoxRegistros").html("<div class=' redondear setpadding5'><img src='{$siteURL}img/loader_world_1.gif' width='45' /></div>");
 	var envioData = new FormData();
 	envioData.append("action",'getRegistros');													
@@ -108,8 +128,14 @@ function activarFuncionalidades(){
         $(this).click(function(){
         	var currentValue = $('#terminoBusqueda').val().trim();
         	var page = $(this).find('.page-link').attr('page');
+
+        	// Guardar con clave única por pantalla
+			sessionStorage.setItem('pagina_{$data1}', page);
+			sessionStorage.setItem('busqueda_{$data1}', currentValue);
+			console.log(sessionStorage);
+
 			if(currentValue == ''){
-				getRegistros('%',page);
+				getRegistros(undefined,page);
 			}else{
 				getRegistros(currentValue,page);
 			}
