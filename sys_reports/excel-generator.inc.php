@@ -32,25 +32,22 @@
 
 date_default_timezone_set('America/Mexico_City');
 
-$data = array();
+$data = [];
+$registros = [];
 
-#$query = "SELECT * FROM [BiossmannData].[dbo].[dp_descriptivos] ORDER BY id_descriptivo DESC";
-#$stmt = $pdo->prepare($query);
-#$stmt->execute();
-$registros = array();
-#if($stmt){
-#	while ($row = $stmt->fetch()) {
-#		$registros[] = $row;
-#	}
-#}else{
-	//die("Error:".$stmt->error);
-#}
+if(!empty($trip_id)){
+	$registros = $Admin->getReportTravelers($trip_id);
+}else if(!empty($year) && $fullYear){
+	$registros = $Admin->getTravelersByYear($year);
+}else{
+	die('Faltan datos para generar el reporte.');
+}
 
-$registros = $Admin->getReportTravelers($trip_id);
 $data = [];
 if(isset($registros) && count($registros) > 0){
 	$data = $registros;
 }
+
 
 #print_pre($data);
 #die();
@@ -66,21 +63,28 @@ $sheet->setCellValue('A3',$labelRegistros);// PHPExcel_Shared_Date::PHPToExcel(t
 $baseRow = 5;//inicio en la fila 7
 $num_rows = 5;
 
-
-
 foreach($data as $r => $dataRow) {
 	$row = $baseRow + $r;
 	
-	$getCurrency = getCurrency($trip_data['currency']);
+	$tieneTripAsignado = FALSE;
+	$trip_id = $dataRow['trip_id'];
+	if(!empty($trip_id)){
+		$trip_data = $Admin->getTrip($trip_id);
+		$tieneTripAsignado = TRUE;
+	}
+
+	$getCurrency = $tieneTripAsignado?getCurrency($trip_data['currency']):'';
 
 	$traveler_id = $dataRow['traveler_id'];
 
-	$pagado_validado = $Admin->getPaymentValidated($traveler_id);
-
+	$pagado_validado = 0;
+	if($tieneTripAsignado){
+		$pagado_validado = $Admin->getPaymentValidated($traveler_id);
+	}
 	#$X - trip_id = $dataRow['X - trip_id'];
-	$trip_name = $trip_data['trip_name'];#$dataRow['trip_name'];
-	$trip_cost = $trip_data['cost'];#$dataRow['trip_cost'];
-	$trip_currency = $getCurrency['moneda'];#$dataRow['trip_currency'];
+	$trip_name = $tieneTripAsignado?$trip_data['trip_name']:'';#$dataRow['trip_name'];
+	$trip_cost = $tieneTripAsignado?$trip_data['cost']:'';#$dataRow['trip_cost'];
+	$trip_currency = $tieneTripAsignado?$getCurrency['moneda']:'';#$dataRow['trip_currency'];
 	$email = $dataRow['email'];
 	$name = $dataRow['name'];
 	$birth_date = convertirFecha($dataRow['birth_date']);
@@ -101,54 +105,6 @@ foreach($data as $r => $dataRow) {
 	$year = $dataRow['year'];
 	$language = $dataRow['language'];
 	$pagado_validado = $pagado_validado;#$dataRow['pagado_validado'];
-
-
-	/*$ponderacionFinal = ($ponderacionArr[$dataRow['competencia1']] + $ponderacionArr[$dataRow['competencia2']] + $ponderacionArr[$dataRow['competencia3']] + $ponderacionArr[$dataRow['competencia4']]) / $numCompetencias;
-	$ponderacionFinal =  number_format($ponderacionFinal, 2, '.', '');*/
-	//$sheet->insertNewRowBefore($row,1);
-
-   /* $id_descriptivo 		= $dataRow["id_descriptivo"];
-    $fid_dp 				= $dataRow["fid_dp"];
-    $puesto_snapshot 		= $dataRow["puesto_snapshot"];
-    	$estatus 				= $dataRow["estatus"];
-	$numEstatus				= showEstatus($estatus);
-	$descEstatus			= showEstatus($estatus,'desc');
-	$nombre_realizador		= $dataRow['nombre_realizador'];
-	$fecha_registro			= $dataRow['fecha_registro'];
-	$nombre_jefe			= $dataRow['nombre_jefe'];
-	$autorizado_por_jefe	= $dataRow['autorizado_por_jefe'];
-	$comentarios_jefe		= $dataRow['comentarios_jefe'];
-	$firma_jefe				= $dataRow['firma_jefe'];
-	$fecha_respuesta_jefe	= $dataRow['fecha_respuesta_jefe'];*/
-	    /*if($firma_jefe != ''){
-
-	    	$firma_jefe_img_src = resampleImageFromBase64($firma_jefe,'firma_'.$nombre_jefe.' '.$fecha_respuesta_jefe);
-
-	    	$sheetimg = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-			$sheetimg->setName('firma');
-			$sheetimg->setDescription('firma');
-			$sheetimg->setPath($firma_jefe_img_src);
-			$sheetimg->setHeight(60);
-			$sheetimg->setCoordinates("K".$row);
-			$sheetimg->setWorksheet($sheet);
-
-	    }*/
-	/*$nombre_rh				= $dataRow['nombre_rh'];
-	$autorizado_por_rh		= $dataRow['autorizado_por_rh'];
-	$comentarios_rh			= $dataRow['comentarios_rh'];
-	$firma_rh				= $dataRow['firma_rh'];
-	$fecha_respuesta_rh	= $dataRow['fecha_respuesta_rh'];*/
-	    /*if($firma_rh != ''){
-	    	$firma_rh_img_src = resampleImageFromBase64($firma_rh,'firma_'.$nombre_rh.' '.$fecha_respuesta_rh);
-
-	    	$sheetimg = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-			$sheetimg->setName('firma');
-			$sheetimg->setDescription('firma');
-			$sheetimg->setPath($firma_rh_img_src);
-			$sheetimg->setHeight(60);
-			$sheetimg->setCoordinates("P".$row);
-			$sheetimg->setWorksheet($sheet);
-	    }*/
 
 	$sheet->setCellValue('A'.$row, $r+1)
 	      ->setCellValue('B'.$row, $traveler_id)
@@ -180,15 +136,6 @@ foreach($data as $r => $dataRow) {
 	$num_rows++;
 }
 
-/*function getABC($numero,$iteracion){
-	$ABC = array('-','A','B','C');
-	if($numero > 0){
-		return $ABC[($numero-($iteracion*3))];
-	}else{
-		return '-';
-	}
-}*/
-
 $sheet->getStyle('A'.$baseRow.':Y'.$num_rows-1)->applyFromArray(
 	array('fill' 	=> array(
 								'type'		=> \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
@@ -207,4 +154,3 @@ $sheet->getStyle('A'.$baseRow.':Y'.$num_rows-1)->applyFromArray(
 		 )
 	);
 
-//$sheet->removeRow($num_rows,1);

@@ -30,3 +30,6 @@ composer.lock
 # Configuraciones y automatizaciones locales
 _automatizar/
 _deploys/
+
+# Archivos de reportes
+sys_reports/Reporte-Eurotrips*.xlsx

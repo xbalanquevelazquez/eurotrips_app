@@ -1077,11 +1077,9 @@ function validarTiposDeCambio(array $data): array
     ];
 
     foreach ($requeridos as $campo) {
-
         if (!isset($data[$campo]) || trim($data[$campo]) === '') {
             $errores[] = "El campo {$campo} es obligatorio.";
         }
-
     }
 
     return $errores;
@@ -1470,6 +1468,15 @@ function esUUID($uuid){
         trim($uuid)
     ) === 1;
 
+}
+function mimeToExtension($mime) {
+    $map = [
+        'image/jpeg' => '.jpg',
+        'image/png' => '.png',
+        'application/pdf' => '.pdf',
+        'image/jpg' => '.jpg',
+    ];
+    return $map[$mime] ?? '.unk';
 }
 function normalizarNombre($valor) {
     $valor = trim($valor);

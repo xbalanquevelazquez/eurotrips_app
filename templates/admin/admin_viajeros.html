@@ -39,7 +39,7 @@
 		    let termino = $(this).val().trim();
 		    // Limpiar solo la página de esta pantalla
     		sessionStorage.removeItem('pagina_{$data1}');
-    		if(termino === ''){
+    		if(termino === ''){ 
 				sessionStorage.removeItem('busqueda_{$data1}');
 			}else{
 				sessionStorage.setItem('busqueda_{$data1}', termino);

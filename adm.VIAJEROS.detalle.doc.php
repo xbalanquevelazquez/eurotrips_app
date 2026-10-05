@@ -108,6 +108,8 @@ if(isset($document_data['document_id'])){
 	}
 
 	$data['visorDocumento'] = $Admin->createVisorDoc($document_data,$traveler_id);
+	$data['downloadDocLink'] = $Admin->createDownloadDocLink($document_data,$traveler_id);
+
 
 	if($document_data['notes'] != ''){
 		$data['observaciones'] = $document_data['notes'];

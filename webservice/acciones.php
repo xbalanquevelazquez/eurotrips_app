@@ -120,6 +120,10 @@ if(isset($_POST['action']) && $_POST['action']!=''){
 								if($call['success'] && isset($call['data']['data'])){
 									$registros = $call['data']['data'];
 
+									if($type == 'VIAJES'){
+										usort($registros, fn($a,$b)=>strcmp($a['trip_name'], $b['trip_name']));
+									}
+
 									$totalRegistros = $call["data"]["totalRecords"];
 									$totalPaginas = $call["data"]["totalPages"];
 									$paginaActual = $call["data"]["currentPage"];

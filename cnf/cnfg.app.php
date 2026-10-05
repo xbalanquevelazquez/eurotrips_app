@@ -51,7 +51,7 @@ if(!defined('VIEWABLE'))
 	define('PRIVADO',TRUE);
 
 	// Cargar credenciales
-	require_once CONF_PATH . 'credentials.php';
+	require_once CONF_PATH . 'credentials.php'; 
 
 	// Aplicar credenciales del servidor
 	foreach ($credentials[$server] as $key => $value) {

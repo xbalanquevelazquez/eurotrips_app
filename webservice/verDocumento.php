@@ -2,8 +2,7 @@
 header("Access-Control-Allow-Origin: *");
 session_start();
 
-
-header("Content-Type: application/json", true);
+#header("Content-Type: application/json", true);
 define('VIEWABLE',TRUE);
 include_once("../cnf/cnfg.app.php");
 include_once("../funct/funcionalidad.php");
@@ -38,6 +37,7 @@ if($continue){
 	if($Admin->comprobarSesion()){
 		// Consultar API
 		$document = $Admin->getDocumentByType($traveler_id,$document_type);
+		$traveler = $Admin->getTraveler($traveler_id);
 		if(isset($document[0])){
 			$document = $document[0];
 		}
@@ -46,7 +46,16 @@ if($continue){
 		$ruta = normalizePath(STORAGE_PATH.$document['document_path']);
 		$data = Document::decryptFile($ruta);
 
-		header('Content-Type: '.$mime);
+		if(isset($_GET['descargar']) && $_GET['descargar'] == '1'){
+			$ext = mimeToExtension($mime);
+		    // Headers de descarga
+		    header('Content-Type: application/octet-stream');
+		    header('Content-Disposition: attachment; filename="'.$traveler['name'].'_'.$document['document_type'].$ext.'"');
+		    header('Content-Length: ' . strlen($data));
+		} else {
+		    // Headers para mostrar (actual)
+		    header('Content-Type: '.$mime);
+		}
 
 		echo $data;
 
@@ -59,5 +68,4 @@ if($continue){
 	echo $error;
 	exit;
 }
-
 ?>

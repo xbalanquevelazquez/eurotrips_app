@@ -227,6 +227,11 @@ class Admin{
 		$trips = [];
 		if(isset($resTrips['data']['totalRecords']) && $resTrips['data']['totalRecords'] > 0){
 			$trips = $resTrips['data'];
+
+			$tripsOrdenados = $resTrips['data']['data'];
+			//ORDENAR ALFABETICAMENTE LOS GRUPOS
+			usort($tripsOrdenados, fn($a, $b) => strcmp($a['trip_name'], $b['trip_name']));
+			$trips['data'] = $tripsOrdenados;
 		} 
 
 		return $trips;
@@ -298,6 +303,41 @@ class Admin{
 				$traveler = $res['data']['data'];
 			}
 			return $traveler;
+		}else{
+			return false;
+		}
+	}
+	function getTravelersByYear($year){
+		if(!is_null($year) && $year!=='' && is_numeric($year)){
+			$getLimit = $this->API->get('/api/travelers/year/'.$year.'/?limit=1');
+			if(isset($getLimit['data']['error']) && $getLimit['data']['error'] == 'SESSION_ENDED'){
+				header('Location:'.WEB_URL.'SALIR');
+				exit;
+			}else if(isset($getLimit['data']['error']) && $getLimit['data']['error'] == 'API_UNAVAILABLE'){
+				die('<div class="alerta amarilla pm5 mb1">API error: '. $getLimit['data']['message'].'</div>');
+			}
+
+			$limit = 0;
+			if(isset($getLimit['data']['totalRecords'])){
+				$limit = $getLimit['data']['totalRecords'];
+			}
+			
+			$travelers = [];
+
+			if($limit > 0){
+				$res = $this->API->get('/api/travelers/year/'.$year.'/?limit='.$limit);
+				
+				if(isset($res['data']['error']) && $res['data']['error'] == 'SESSION_ENDED'){
+					header('Location:'.WEB_URL.'SALIR');
+					exit;
+				}else if(isset($res['data']['error']) && $res['data']['error'] == 'API_UNAVAILABLE'){
+					die('<div class="alerta amarilla pm5 mb1">API error: '. $res['data']['message'].'</div>');
+				}
+				if(isset($res['data']['data'])){
+					$travelers = $res['data']['data'];
+				}
+			}
+			return $travelers;
 		}else{
 			return false;
 		}
@@ -880,9 +920,9 @@ class Admin{
 		$document_id = $documento['document_id'];
 		$mime = $documento['mime_type'];
 		$document_type = $documento['document_type'];
+		$bufferVisor = '';
 
 		if ($mime == 'application/pdf') {
-			$bufferVisor = '';
 			$bufferVisor .= '    <object';
 			$bufferVisor .= '        data="'.WEB_URL.'webservice/verDocumento.php?id='.$document_id.'&trav='.$traveler_id.'&tipo='.$document_type.'"';
 			$bufferVisor .= '        type="application/pdf"';
@@ -896,7 +936,6 @@ class Admin{
 
 			$bufferVisor .= '    </object>';
 		}else{
-			$bufferVisor = '';
 			$bufferVisor .= '    <a href="'.WEB_URL.'webservice/verDocumento.php?id='.$document_id.'&trav='.$traveler_id.'&tipo='.$document_type.'" target="_blank">';
 			$bufferVisor .= '    <img';
 			$bufferVisor .= '        src="'.WEB_URL.'webservice/verDocumento.php?id='.$document_id.'&trav='.$traveler_id.'&tipo='.$document_type.'"';
@@ -904,6 +943,13 @@ class Admin{
 			$bufferVisor .= '    </a>';
 		}
 		return $bufferVisor;
+	}
+	function createDownloadDocLink($documento,$traveler_id){
+		$document_id = $documento['document_id'];
+		$document_type = $documento['document_type'];
+		$link = WEB_URL.'webservice/verDocumento.php?id='.$document_id.'&trav='.$traveler_id.'&tipo='.$document_type.'&descargar=1';
+
+		return $link;
 	}
 	function getCurrentYearRegister(){
 		$resConfig = $this->API->get('/api/configurations?search=CURRENT_YEAR_REGISTER');
