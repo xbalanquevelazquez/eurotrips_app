@@ -35,6 +35,13 @@ if(isset($_GET['tipo']) && $_GET['tipo'] !== ''){
 if($continue){
 
 	if($Admin->comprobarSesion()){
+
+	    $current_traveler_id = $Admin->obtenerUsr('user_id');
+	    
+	    if($current_traveler_id != $traveler_id && !$Admin->esAdmin()){
+	        http_response_code(403);
+	        exit('No autorizado');
+	    }
 		// Consultar API
 		$document = $Admin->getDocumentByType($traveler_id,$document_type);
 		$traveler = $Admin->getTraveler($traveler_id);

@@ -2,8 +2,8 @@
 date_default_timezone_set('America/Mexico_City');
 header('Content-Type: text/html; charset=utf-8');
 define('DEBUG',	TRUE);
-ini_set('error_reporting', E_ALL);
-#if(DEBUG){
+if(DEBUG){
+	ini_set('error_reporting', E_ALL);
 	error_reporting(-1);
 	ini_set('display_errors', '1');
 
@@ -20,11 +20,8 @@ ini_set('error_reporting', E_ALL);
 	    echo "in " . $file . "\t";
 	    echo "on line " . $line . "";
 	    echo "</div>";
-
-	    #exit(1);
 	});
-#}
-
+}
 
 if(!defined('VIEWABLE'))
 { 	
@@ -34,7 +31,6 @@ if(!defined('VIEWABLE'))
 }else{
 	$server = $_SERVER['SERVER_NAME'];
 	
-	#$thisserver = $_SERVER['SERVER_NAME'];
 	$mainPath = $_SERVER['DOCUMENT_ROOT'];
 	define('APP_NAME', 		'Eurotrips APP');
 	define('APP_PATH',	dirname(__FILE__,2).DIRECTORY_SEPARATOR);//Un nivel arriba
@@ -44,7 +40,6 @@ if(!defined('VIEWABLE'))
 	define('LIB_PATH',		APP_PATH.'libs/');
 	define('FILE_PATH',		APP_PATH.'webfiles/pdf/');
 	define('APP_IMG_PATH',	APP_PATH.'webfiles/');
-	define('WEB_IMG_PATH',	APP_PATH.'webfiles/');
 	define('TEMPLATE_PATH',	APP_PATH.'templates/');
 	define('FUNCT_PATH',	APP_PATH.'funct/');
 	
@@ -65,12 +60,12 @@ if(!defined('VIEWABLE'))
 
 
 	define('WEB_FILE_PATH',	WEB_URL.'webfiles/pdf/');
+	define('WEB_IMG_PATH',	WEB_URL.'webfiles/');
 
 
 
 	define('LOGIN_LOCK_MINUTES',15);
 	define('LOGIN_MAX_ATTEMPTS',3);
-
 
 
 	require_once CONF_PATH . 'languages.php';

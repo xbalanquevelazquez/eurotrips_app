@@ -51,7 +51,7 @@
 				</div>
 				<div class="col tituloSeccion"><?php echo __(utf8_encode_($tituloDePagina)); ?></div>
 				<div class="col usuario aright">
-					<div class="bloqueUsuario"><i class="icon fa-solid fa-circle-user" title="<?php echo $Admin->obtenerUsr('nombre') ?>"></i><span><?php echo $Admin->obtenerUsr('nombre'); ?></span></div>
+					<div class="bloqueUsuario"><i class="icon fa-solid fa-circle-user" title="<?php echo htmlspecialchars($Admin->obtenerUsr('nombre'), ENT_QUOTES, 'UTF-8') ?>"></i><span><?php echo htmlspecialchars($Admin->obtenerUsr('nombre'), ENT_QUOTES, 'UTF-8'); ?></span></div>
 					<div class="small texto-grisclaro"><?php echo __(convertirPerfil($Admin->obtenerUsr('perfil'))); ?></div>
 				</div>
 				<?php if(!$Admin->esAdmin()){ ?>

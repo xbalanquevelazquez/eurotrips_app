@@ -16,7 +16,8 @@ else{
 	$token = $data2;
 	$tokenHash = hash('sha256',$token);
 
-	$resultado = $conn->query("SELECT * FROM password_resets WHERE token_hash='$tokenHash'");
+	$tokenHash_escaped = $conn->real_escape_string($tokenHash);
+	$resultado = $conn->query("SELECT * FROM password_resets WHERE token_hash='$tokenHash_escaped'");
 
 	$num = $conn->num_rows($resultado);
 	$registros = $conn->fetch($resultado);

@@ -213,7 +213,7 @@ function enviarMensaje($destinatario, $tituloMensaje, $templateName, $datosMensa
             $error = '';
         } else { 
             $success = FALSE;
-            $error = 'Error de envío:' . $phpMailer->error;
+            $error = 'Error de envío: MailFactory::enviar falló';
         }
     return array('success'=>$success,'error'=>$error);
 }

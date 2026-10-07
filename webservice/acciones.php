@@ -2,7 +2,6 @@
 header("Access-Control-Allow-Origin: *");
 session_start();
 
-
 header("Content-Type: application/json", true);
 define('VIEWABLE',TRUE);
 include_once("../cnf/cnfg.app.php");
@@ -10,6 +9,12 @@ include_once(FUNCT_PATH."funcionalidad.php");
 if(DEBUG){
 	error_reporting(E_ALL);
 	ini_set('display_errors', 1);
+}
+
+if(!$Admin->comprobarSesion()){
+    http_response_code(401);
+    echo json_encode(['success'=>false,'error'=>'No autorizado']);
+    exit;
 }
 
 $success 		= FALSE;
@@ -57,7 +62,7 @@ if(isset($_POST['action']) && $_POST['action']!=''){
 						$endpoint = 'installments';
 						$regXPag = 100;
 						break;
-					deafult:
+					default:
 					break;
 				}
 				if ($filter == 'Sin especificar'){
@@ -130,7 +135,7 @@ if(isset($_POST['action']) && $_POST['action']!=''){
 
 									$buffer = generarTablaDatos($registros, $type, $Admin);
 
-									$paginacion = $Admin->paginador->paginar($totalRegistros,$regXPag,10,$totalPaginas,$page,"$data1");
+									$paginacion = $Admin->paginador->paginar($totalRegistros,$regXPag,10,$totalPaginas,$page,"$type");
 									
 									$success = TRUE;
 									$error   = '';
@@ -218,7 +223,7 @@ if(isset($_POST['action']) && $_POST['action']!=''){
 				if ($filter == 'Sin especificar'){
 					$success = FALSE;
 					$error   = "<div class='bg-warning'>Necesita indicar el valor del filtro correctamente</div>";
-					$data    = array();	
+					$data    = array();
 				} else {
 									
 					$call = $Admin->getTrips($filter);
@@ -550,7 +555,7 @@ if(isset($_POST['action']) && $_POST['action']!=''){
 					$data    = array();	
 				} else {
 					$payment_data = [
-						"amount_original" => number_format($amount_original,2),
+						"amount_original" => number_format($amount_original, 2, '.', ''),
 					    "currency_original" => $currency_original,
 					    "exchange_rate" => $exchange_rate,
 					    "amount_mxn" => $amount_mxn,
@@ -561,10 +566,9 @@ if(isset($_POST['action']) && $_POST['action']!=''){
 					    "comments" => $comments,
 					    "paid_at" => $paid_at
 					];
-					#print_pre($payment_data);
 						
 					$call = $Admin->API->put("/api/".$endpoint."/".$payment_id,$payment_data);
-					#print_pre($call);
+					
 					if(!isset($call['data']['error'])){
 
 						$response = $call['data'];
@@ -618,25 +622,30 @@ if(isset($_POST['action']) && $_POST['action']!=''){
 							"siteURL" => WEB_URL,
 							"contenido" => 	$contenido
 						];
-						$traveler_id = $response['traveler_id'];
-						$traveler = $Admin->getTraveler($traveler_id);
+						$traveler_id = $response['traveler_id'] ?? '';
+						$traveler = $traveler_id !== '' ? $Admin->getTraveler($traveler_id) : null;
 
-						$mailResponse = enviarMensaje(
-											$destinatario = $traveler['email'],
-											$tituloMensaje='Eurotrips - '.$pay_type.' - '.$estatus_mail, 
-											$templateName='correo_aviso.html', 
-											$datosMensaje
-										);
-
-
-						if($response){
-							$success = TRUE;
-							$error   = '';
-							$data    = array("mensaje"=>'Ok',"codigo"=>$buffer);
-						}else{
+						if (!$traveler || empty($traveler['email'])) {
 							$success = FALSE;
-							$error   = "<div class='bg-warning'>Necesita indicar el id correctamente</div>";
-							$data    = $call;	
+							$error   = "<div class='bg-warning'>No se pudo obtener la informacion del viajero asociado al pago</div>";
+							$data    = $call;
+						} else {
+							$mailResponse = enviarMensaje(
+												$destinatario = $traveler['email'],
+												$tituloMensaje='Eurotrips - '.$pay_type.' - '.$estatus_mail, 
+												$templateName='correo_aviso.html', 
+												$datosMensaje
+												);
+
+							if($response){
+								$success = TRUE;
+								$error   = '';
+								$data    = array("mensaje"=>'Ok',"codigo"=>$buffer);
+							}else{
+								$success = FALSE;
+								$error   = "<div class='bg-warning'>Necesita indicar el id correctamente</div>";
+								$data    = $call;
+							}
 						}
 					}else{
 						$success = FALSE;
@@ -905,209 +914,6 @@ if(isset($_POST['action']) && $_POST['action']!=''){
 					}
 				}
 			break;
-		/*****************************************/
-		/******** cambiarNombreArchivo  **********/
-		/*****************************************/
-		case 'cambiarNombreArchivo':
-			$referer = isset($_POST['referer']) && trim($_POST['referer']) != ''?trim($_POST['referer']):'Sin-especificar';
-			$edit_filename = isset($_POST['edit_filename']) && trim($_POST['edit_filename']) != ''?trim($_POST['edit_filename']):'Sin-especificar';
-			$extension = isset($_POST['extension']) && trim($_POST['extension']) != ''?trim($_POST['extension']):'sin-especificar';
-			$es_detalle = isset($_POST['es_detalle']) && trim($_POST['es_detalle']) != '' && is_numeric($_POST['es_detalle'])?TRUE:FALSE;
-
-			$data = array();
-			$nombre_original = "{$edit_filename}{$extension}";
-
-			if($referer == 'Sin-especificar' || $edit_filename == 'Sin-especificar' || $extension == 'sin-especificar'){
-				$success = FALSE;
-				$error .= 'Faltan datos de referencia del proyecto/archivo';
-				$data    = array();	
-			}else{
-				if(!$editable){
-					$success = FALSE;
-					$error .= 'No tiene permisos para editar archivos';
-					$data    = array();
-				}else{					    
-					$datos['nombre_original'] = $nombre_original;
-					if($es_detalle){
-					    $tabla = 'documentos_detalle';
-					}else{
-						$tabla = 'documentos';
-					}
-					if($Admin->conexion->update(PREFIJO.$tabla,$datos," WHERE code='$referer'",'TEXT')){
-						$buffer = "<div class='bg-success'>Datos guardados </div>";
-						$success = TRUE;
-						$error   = '';
-						$data    = array("mensaje"=>'Ok',"codigo"=>$buffer,"nombre_original"=>$nombre_original,"edit_filename"=>$edit_filename,"code"=>$referer);
-					}else{
-						$success = FALSE;
-						$error   = "<div class='bg-warning'>Error:".$Admin->conexion->error."</div>";
-						$data    = array();	
-					}
-				}//$editable
-			}//variables $fid_proyecto, $referer, $tipo_documento
-		break;
-		/*****************************************/
-		/******** borrarArchivo  **********/
-		/*****************************************/
-		case 'borrarArchivo':
-			$referer = isset($_POST['referer']) && trim($_POST['referer']) != ''?trim($_POST['referer']):'Sin-especificar';
-			$es_detalle = isset($_POST['es_detalle']) && trim($_POST['es_detalle']) != '' && is_numeric($_POST['es_detalle'])?TRUE:FALSE;
-
-			$data = array();
-
-			if($referer == 'Sin-especificar'){
-				$success = FALSE;
-				$error .= 'Faltan datos de referencia del proyecto/archivo';
-				$data    = array();	
-			}else{
-				if(!$editable){
-					$success = FALSE;
-					$error .= 'No tiene permisos para borrar archivos';
-					$data    = array();
-				}else{					    
-					$datos['doc_activo'] = 0;
-					if($es_detalle){
-					    $tabla = 'documentos_detalle';
-					}else{
-						$tabla = 'documentos';
-					}
-
-					if($Admin->conexion->update(PREFIJO.$tabla,$datos," WHERE code='$referer'",'TEXT')){
-						$buffer = "<div class='bg-success'>Datos guardados </div>";
-						$success = TRUE;
-						$error   = '';
-						$data    = array("mensaje"=>'Ok',"codigo"=>$buffer,"code"=>$referer);
-					}else{
-						$success = FALSE;
-						$error   = "<div class='bg-warning'>Error:".$Admin->conexion->error."</div>";
-						$data    = array();	
-					}
-				}//$editable
-			}//variables $fid_proyecto, $referer, $tipo_documento
-		break;
-		/*****************************************/
-		/******** guardarArchivo  **********/
-		/*****************************************/
-		case 'guardarArchivo':
-			$id = isset($_POST['id']) && trim($_POST['id']) != '' && is_numeric($_POST['id'])?trim($_POST['id']):'Sin especificar';
-			$tipo = isset($_POST['tipo']) && trim($_POST['tipo']) != ''?trim($_POST['tipo']):'Sin especificar';
-			$data = array();
-			$now = date("Y-m-d H:i:s");
-			$fechahora = date("Y-m-d_H-i-s");
-			$nombreArchivo = "{$id}_{$tipo}_{$fechahora}";
-
-			if(isset($_FILES)){  
-			    $files = array();
-
-			    $uploaddir = FILE_PATH;
-			    foreach($_FILES as $file){
-					$extension = explode('.', $file['name']);
-					$extension = end($extension);
-					
-			        if(move_uploaded_file($file['tmp_name'], $uploaddir.$nombreArchivo.'.'.$extension)){
-			            $files[] = $uploaddir . $file['name'];
-
-			            $datos['fecha_ultima_actualizacion'] = $now;
-			            $datos[$tipo] = $nombreArchivo.'.'.$extension;//GUARDADO EN LA CATEGORIA CORRECTA
-			            
-						if($Admin->conexion->update(PREFIJO.'registros',$datos,$condicion=" WHERE nip='$id'",'TEXT',FALSE)){
-								$estatusARegistrar = 'NO SE IDENTIFICO';
-								switch($tipo){
-									case 'comprobante_pago':
-										$estatusARegistrar = 'REGISTRO DE COMPROBANTE DE PAGO';
-										break;
-									case 'respaldo_envio':
-										$estatusARegistrar = 'REGISTRO DE RESPALDO DE ENVIO';
-										break;
-									case 'respaldo_entrega':
-										$estatusARegistrar = 'REGISTRO DE RESPALDO DE ENTREGA';
-										break;
-								}
-								$admRegistro->cambiarEstatus($id,$admRegistro->estatus_registro,$estatusARegistrar,'');
-								$buffer = "<div class='bg-success'>Datos guardados </div>";
-								$success = TRUE;
-								$error   = '';
-								$linkArchivo = '<a href="'.WEB_FILE_PATH.$nombreArchivo.'.'.$extension.'" target="_blank">Archivo</a>';
-								$data    = array("mensaje"=>'Ok',"codigo"=>$buffer,"archivo"=>$linkArchivo,"estatus"=>$estatusARegistrar);
-						}else{
-							$success = FALSE;
-							$error   = "<div class='bg-warning'>Error:".$Admin->conexion->error."</div>";
-							$data    = array();	
-						}
-			        }else{
-			            $success = FALSE;
-						$error .= 'Problema al subir la imagen';
-						$data    = array();	
-			        }
-			    }
-			}else{
-				$success = FALSE;
-				$error   = 'No se indicaron archivos: '.count($_FILES);
-				$data    = array();	
-			}
-
-			break;
-	case 'testguarda':
-		$data = array();
-		$now = date("Y-m-d H:i:s");
-		$fechahora = date("Y-m-d_H-i-s");
-		$nombreArchivo = "temporal".$fechahora;#{$id}_{$tipo}_{$fechahora}
-
-		if(isset($_FILES)){  
-		    $files = array();
-
-		    $uploaddir = FILE_PATH;
-		    foreach($_FILES as $file){
-				$extension = explode('.', $file['name']);
-				$extension = end($extension);
-				
-		        if(move_uploaded_file($file['tmp_name'], $uploaddir.$nombreArchivo.'.pdf')){
-		            $files[] = $uploaddir . $file['name'];
-		            
-		            $query = "INSERT INTO testxvm(data) VALUES('{$uploaddir}{$nombreArchivo}.pdf')";
-					$res = $mysqli->query($query);
-					if($res){
-						$success = TRUE;
-						$error   = '';
-						$data    = array('resultado'=>'OK','file_data'=>"{$uploaddir}{$nombreArchivo}.pdf");
-						
-					}else{
-						$success = FALSE;
-						$error   = $mysqli->error;
-						$data    = array('Error');
-					}
-		        }else{
-		            $success = FALSE;
-					$error .= 'Problema al subir archivo';
-					$data    = array();	
-		        }
-		    }
-		}else{
-			$success = FALSE;
-			$error   = 'No se indicaron archivos: '.count($_FILES);
-			$data    = array();	
-		}
-		break;
-	case 'hacerEditable':
-		$fid_dp = isset($_POST['fid_dp']) && trim($_POST['fid_dp']) != '' && is_numeric($_POST['fid_dp'])?trim($_POST['fid_dp']):'Sin especificar';
-		$fid_uqid = isset($_POST['fid_uqid']) && trim($_POST['fid_uqid']) != '' && is_numeric($_POST['fid_uqid'])?trim($_POST['fid_uqid']):'Sin especificar';
-
-		if($fid_dp != 'Sin especificar' && $fid_uqid != 'Sin especificar'){
-			$query = "UPDATE [BiossmannData].[dbo].[dp_descriptivos] SET estatus=6,firma_jefe='',comentarios_jefe='',fecha_respuesta_jefe=NULL,autorizado_por_jefe='',firma_rh='',comentarios_rh='',fecha_respuesta_rh=NULL,autorizado_por_rh='' WHERE fid_dp={$fid_dp} AND  fid_uqid={$fid_uqid}";
-			$stmt = $pdo->prepare($query);
-  			if($stmt->execute()){
-  				$success = TRUE;
-				$error   = '';
-				$data    = array('query'=>$query);
-  			}else{
-  				$success = FALSE;
-				$error   = 'Error ejecutar SQL';
-				$data    = array();
-  			}		
-		}else{	
-
-		}
-		break;
 	/*****************************************/
 	/******** DEFAULT  **********/
 	/*****************************************/

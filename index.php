@@ -51,7 +51,7 @@ if(PRIVADO){//Son paginas privadas = tienen LOGIN
 					if($comprobarUsr === TRUE){
 						#echo "usr comprobado<br>";
 						$LoginAttempts->reiniciarIntentos($email);
-						if(!isset($data1) || $data1=='' || $data1='LOGIN') { $data1 = $Admin->obtenerUsr('firstSecc'); } 
+						if(!isset($data1) || $data1=='' || $data1=='LOGIN') { $data1 = $Admin->obtenerUsr('firstSecc'); } 
 
 						$extra = '';
 						if(isset($_POST['code']) && $_POST['code']!=''){

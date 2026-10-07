@@ -130,8 +130,8 @@ if(isset($document_data['document_id'])){
 echo makeTemplate($plantilla, $data, 'admin');
 ?>
 <script type="text/javascript">
-	const traveler_id = '<?php echo $traveler_id; ?>';
-	const document_id = '<?php echo $document_id; ?>';
+	const traveler_id = <?php echo json_encode($traveler_id); ?>;
+	const document_id = <?php echo json_encode($document_id); ?>;
 	const document_data = <?php echo $document_data_json; ?>;
 	$(document).ready(function(){
 		console.log('Init...');

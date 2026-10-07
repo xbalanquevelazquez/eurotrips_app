@@ -13,7 +13,8 @@ class LoginAttempts
 	function obtenerDatos($email){
 		$userData = [];
 		#echo "SELECT * FROM {$this->table} WHERE email='$email'";
-		$resultado = $this->conn->query("SELECT * FROM {$this->table} WHERE email='$email'");
+		$email_escaped = $this->conn->real_escape_string($email);
+		$resultado = $this->conn->query("SELECT * FROM {$this->table} WHERE email='$email_escaped'");
 		#print_pre($resultado);
 		$num = $this->conn->num_rows($resultado);
 

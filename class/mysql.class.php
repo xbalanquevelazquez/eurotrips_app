@@ -61,8 +61,10 @@ class MySQL{
 				
 				if(!$this->resultado = $this->mysqli->query($sql)){
 					#echo mysqli_real_escape_string($sql);
-					echo "[Error en BD:".$this->dbname."]".$sql;
-					$this->error=mysqli_errno($this->mysqli).": ".mysqli_error($this->mysqli); 
+					#echo "[Error en BD:".$this->dbname."]".$sql;
+					error_log("[Error en BD:".$this->dbname."]".$sql);
+					$this->error = "Error en la consulta";
+					#$this->error=mysqli_errno($this->mysqli).": ".mysqli_error($this->mysqli); 
 					#si está activado el debug, mostrar error
 					if($this->debug) die("[Error en BD | ".$this->dbname."] ".$this->error);
 					return false;
@@ -88,7 +90,11 @@ class MySQL{
 	}
 	function fetch($resultado,$opcion = 'ASSOC'){
 		$this->set_charset();
-		if(empty($resultado)) die("El identificador no tiene datos. (".$this->lastQuery.")");
+		#if(empty($resultado)) die("El identificador no tiene datos. (".$this->lastQuery.")");
+		if(empty($resultado)){
+		    error_log("Consulta sin resultados: ".$this->lastQuery);
+		    die("Error en la consulta");
+		}
 		$this->numfilas = $resultado->num_rows;
 		$this->numcols 	= $resultado->field_count;
 		$arr = array();
@@ -171,6 +177,9 @@ class MySQL{
 	}
 	function delete($tabla,$condicion){
 		return $this->query("DELETE FROM $tabla WHERE $condicion");
+	}
+	function real_escape_string($string){
+	    return $this->mysqli->real_escape_string($string);
 	}
 	function free(){
 		return mysqli_free_result($this->resultado);

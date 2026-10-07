@@ -806,9 +806,9 @@ class Admin{
 		if($persistencia){
 			$email = $this->obtenerUsrData('email');
 			$traveler_data = $this->getUserData($email,FALSE);
-			if(isset($traveler_data['data']['error']) && $traveler_data['data']['error']='SESSION_ENDED'){
+			if(isset($traveler_data['data']['error']) && $traveler_data['data']['error']=='SESSION_ENDED'){
 				return FALSE;
-			}else if(isset($traveler_data['data']['error']) && $traveler_data['data']['error']='API_UNAVAILABLE'){
+			}else if(isset($traveler_data['data']['error']) && $traveler_data['data']['error']=='API_UNAVAILABLE'){
 				die('<div class="alerta amarilla pm5 mb1">API error: '. $traveler_data['data']['message'].'</div>');
 			}
 			$traveler_id = $traveler_data['traveler_id'];
